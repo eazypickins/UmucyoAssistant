@@ -1,0 +1,338 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head><title>Umucyo Assistant - Procurement Intelligence</title>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; background: #F4F6F9; color: #1C2833; min-height: 100vh; }
+    .app-header { background: #fff; border-bottom: 1px solid #e8eaed; padding: 14px 18px 10px; display: flex; align-items: flex-start; justify-content: space-between; }
+    .app-title { font-size: 22px; font-weight: 700; color: #1C2833; } .app-title span { color: #2060C0; }
+    .app-tagline { font-size: 12px; color: #999; margin-top: 1px; }
+    .lang-switch { display: flex; gap: 3px; }
+    .lang-btn { padding: 5px 10px; border-radius: 6px; border: 1px solid #e0e0e0; background: #fff; font-size: 11px; font-weight: 600; color: #888; cursor: pointer; }
+    .lang-btn.active { background: #2060C0; color: #fff; border-color: #2060C0; }
+    .navbar { background: #fff; border-bottom: 1px solid #e8eaed; position: relative; top: 0; z-index: 99; padding: 0 12px; display: flex; align-items: center; justify-content: center; overflow: visible; -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 2px; }
+    .navbar::-webkit-scrollbar { display: none; }
+    .nav-group { position: relative; flex-shrink: 0; }
+    .nav-tab { display: flex; align-items: center; gap: 5px; padding: 10px 12px; font-size: 13px; font-weight: 500; color: #666; cursor: pointer; border: none; background: transparent; white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.15s; font-family: inherit; }
+    .nav-tab:hover { color: #333; background: #F0F4F8; border-radius: 8px 8px 0 0; }
+    .nav-tab.active { color: #2060C0; font-weight: 600; border-bottom-color: #2060C0; }
+    .nav-icon { font-size: 15px; line-height: 1; }
+    .nav-dropdown { display: none; position: absolute; top: 100%; left: 0; background: #fff; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.12); min-width: 200px; padding: 6px; z-index: 100; }
+    .nav-dropdown.show { display: block; }
+    .dd-item { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 8px; font-size: 12px; color: #555; cursor: pointer; transition: background 0.1s; white-space: nowrap; }
+    .dd-item:hover { background: #E8F0FE; color: #2060C0; }
+    .container { max-width: 960px; margin: 0 auto; padding: 18px 16px; }
+    @media(min-width:1200px){.container{max-width:1100px}}
+    .main-card { background: #fff; border-radius: 14px; border: 1px solid #e8eaed; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); margin-bottom: 14px; }
+    .main-card .subtitle { font-size: 13px; color: #888; margin-bottom: 16px; }
+    .search-input { width: 100%; padding: 12px 16px; border: 2px solid #e8e8e8; border-radius: 12px; font-size: 14px; font-family: inherit; background: #F0F4F8; }
+    .search-input:focus { outline: none; border-color: #2060C0; background: #fff; }
+    .btn { padding: 10px 20px; border-radius: 10px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+    .btn-primary { background: #2060C0; color: #fff; width: 100%; margin-top: 10px; }
+    .btn-xs { font-size: 11px; padding: 6px 12px; border-radius: 8px; border: 1px solid #e8e8e8; background: #F0F4F8; cursor: pointer; color: #555; font-weight: 500; margin-right: 6px; min-height: 34px; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px; background: #F0F4F8; border-radius: 10px; margin: 12px 0; }
+    .info-item { font-size: 12px; color: #555; } .info-item strong { color: #333; }
+    .detail-block { margin-top: 10px; padding: 12px; background: #F0F4F8; border-radius: 10px; font-size: 12px; line-height: 1.6; color: #444; }
+    .detail-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #999; margin-bottom: 4px; letter-spacing: 0.3px; }
+    .pred-section { margin-top: 10px; padding: 12px; background: #E8F0FE; border-radius: 10px; }
+    .pred-section h4 { font-size: 11px; font-weight: 700; color: #2060C0; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 8px; }
+    .pred-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 10px; display: inline-block; margin-right: 6px; }
+    .pred-high { background: #d4edda; color: #155724; } .pred-mid { background: #fff3cd; color: #856404; } .pred-low { background: #f8d7da; color: #721c24; }
+    .pred-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+    .pred-item { font-size: 11px; color: #555; } .pred-item b { color: #333; }
+    .comp-list { font-size: 11px; color: #888; margin-top: 6px; }
+    .risk-warn { color: #c0392b; font-weight: 600; } .risk-ok { color: #1B7A3D; }
+    .empty-state { text-align: center; padding: 30px; color: #888; font-size: 13px; }
+    .spinner { text-align: center; padding: 30px; color: #999; font-size: 13px; }
+
+    .lookup-loader { text-align: center; padding: 24px 16px; }
+    .lookup-loader .loader-title { font-size: 13px; font-weight: 600; color: #1C2833; margin-bottom: 16px; }
+    .loader-bar { height: 4px; background: #e8eaed; border-radius: 2px; overflow: hidden; margin-bottom: 12px; }
+    .loader-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg,#2060C0,#F4A940); border-radius: 2px; animation: loaderFill 3s ease-in-out forwards; }
+    @keyframes loaderFill { 0% { width: 0%; } 30% { width: 30%; } 60% { width: 65%; } 85% { width: 85%; } 100% { width: 95%; } }
+    .loader-steps { font-size: 10px; color: #888; line-height: 1.8; }
+    .loader-steps span { display: inline-block; margin: 0 6px; opacity: 0.3; transition: opacity 0.5s; animation: stepPulse 1.2s ease-in-out infinite; }
+    .loader-steps span:nth-child(1) { animation-delay: 0s; }
+    .loader-steps span:nth-child(2) { animation-delay: 0.8s; }
+    .loader-steps span:nth-child(3) { animation-delay: 1.6s; }
+    .loader-steps span:nth-child(4) { animation-delay: 2.4s; }
+    @keyframes stepPulse { 0%,100% { opacity: 0.3; } 50% { opacity: 1; color: #2060C0; } }
+    .tab-row { display: flex; gap: 4px; margin: 14px 0 8px; border-bottom: 1px solid #e8eaed; }
+    .tab-btn { padding: 8px 16px; font-size: 12px; font-weight: 500; color: #888; border: none; background: transparent; cursor: pointer; border-bottom: 2px solid transparent; font-family: inherit; }
+    .tab-btn.active { color: #2060C0; border-bottom-color: #2060C0; font-weight: 600; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .risk-item { font-size: 11px; color: #555; padding: 10px 12px; background: #fff; border-radius: 8px; border: 1px solid #eee; }
+    .risk-item b { display: block; color: #333; font-size: 15px; margin-bottom: 2px; }
+    .risk-item .rl { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #999; }
+    .risk-section { padding: 12px; background: #E8F0FE; border-radius: 10px; margin-bottom: 10px; }
+    .risk-section h5 { font-size: 11px; font-weight: 700; color: #2060C0; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+
+<div class="app-header"><div><div class="app-title">Umucyo<span>Assistant</span></div><div class="app-tagline">Your AI-powered procurement partner</div></div><div class="lang-switch"><button class="lang-btn active" onclick="setLang('EN')">EN</button><button class="lang-btn" onclick="setLang('FR')">FR</button><button class="lang-btn" onclick="setLang('KIN')">KIN</button></div></div>
+<div class="navbar" id="navbar">
+  <div class="nav-group"><button class="nav-tab" onclick="navigate('dashboard')"><span class="nav-icon">🏠</span>Home</button></div>
+  <div class="nav-group"><button class="nav-tab active" onclick="toggleDD('dd-opp')"><span class="nav-icon">📋</span>Opportunities ▾</button><div class="nav-dropdown" id="dd-opp"><div class="dd-item" onclick="navigate('find')"><span class="nav-icon">🔍</span>Find Matches</div><div class="dd-item" onclick="navigate('check')"><span class="nav-icon">📋</span>Check Tender</div></div></div>
+  <div class="nav-group"><button class="nav-tab" onclick="toggleDD('dd-market')"><span class="nav-icon">📊</span>Market Intel ▾</button><div class="nav-dropdown" id="dd-market"><div class="dd-item" onclick="navigate('market')"><span class="nav-icon">📊</span>Dashboard</div><div class="dd-item" onclick="navigate('calendar')"><span class="nav-icon">📅</span>Calendar</div><div class="dd-item" onclick="navigate('ratings')"><span class="nav-icon">💰</span>Ratings</div><div class="dd-item" onclick="navigate('sector')"><span class="nav-icon">🏗️</span>Sectors</div><div class="dd-item" onclick="navigate('competitor')"><span class="nav-icon">🔍</span>Competitors</div></div></div>
+   <div class="nav-group"><button class="nav-tab" onclick="toggleDD('dd-tools')"><span class="nav-icon">🧰</span>My Tools ▾</button><div class="nav-dropdown" id="dd-tools"><div class="dd-item" onclick="navigate('dna')"><span class="nav-icon">🧬</span>My Business DNA</div><div class="dd-item" onclick="navigate('portfolio')"><span class="nav-icon">🏆</span>My Portfolio</div><div class="dd-item" onclick="navigate('insights')"><span class="nav-icon">💡</span>My Insights</div><div class="dd-item" onclick="navigate('compliance')"><span class="nav-icon">📝</span>Review Proposal</div><div class="dd-item" onclick="navigate('jv')"><span class="nav-icon">🤝</span>JV Partners</div></div></div>
+  <div class="nav-group"><button class="nav-tab" onclick="toggleDD('dd-learn')"><span class="nav-icon">📖</span>Learn ▾</button><div class="nav-dropdown" id="dd-learn"><div class="dd-item" onclick="navigate('learn')"><span class="nav-icon">📖</span>Learn</div>       <div class="dd-item" onclick="navigate('upgrade')"><span class="nav-icon">⭐</span>Upgrade</div>
+       <div class="dd-item" onclick="navigate('guide')"><span class="nav-icon">📖</span>User Guide</div>
+       <div class="dd-item admin-link" onclick="navigate('admin')" style="display:none"><span class="nav-icon">⚙️</span>Admin</div></div></div>
+</div>
+
+<div class="container">
+  <div class="main-card">
+    <div class="subtitle">Look up any tender by OCID, Umucyo link, or title to see details, predictions, and competitive landscape.</div>
+    <input class="search-input" id="lookupInput" placeholder="e.g. ocds-a44gk2-2025-000001" onkeypress="if(event.key=='Enter')doLookup()">
+    <button class="btn btn-primary" onclick="doLookup()">Look it up</button>
+  </div>
+  <div id="resultArea"></div>
+</div>
+
+<script>
+var USER_ID = '<?= uid ?>' || '';
+(function(){var s=localStorage.getItem('umucyo_uid');if(s&&(!USER_ID||USER_ID==='test_user')&&window.location.search.indexOf('uid=')===-1){window.location.replace('?page=check&uid='+encodeURIComponent(s));}})();
+var LOOKUP = '<?= lookup ?>' || '';
+window.setLang = function(l) { document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.toggle('active', b.textContent === l); }); };
+window.toggleDD = function(id) { var target = document.getElementById(id); document.querySelectorAll('.nav-dropdown').forEach(function(d) { if (d !== target) d.classList.remove('show'); }); target.classList.toggle('show'); };
+document.addEventListener('click', function(e) { if (!e.target.closest('.nav-group')) { document.querySelectorAll('.nav-dropdown').forEach(function(d) { d.classList.remove('show'); }); } });
+
+function doLookup() {
+  var id = document.getElementById('lookupInput').value.trim(); if (!id) return;
+  document.getElementById('resultArea').innerHTML = '<div class="main-card"><div class="lookup-loader"><div class="loader-title">🔍 Searching for "' + esc(id) + '"</div><div class="loader-bar"><div class="loader-bar-fill"></div></div><div class="loader-steps"><span>Matching tender records</span> → <span>Computing relevance</span> → <span>Analyzing buyer history</span> → <span>Loading predictions</span></div></div></div>';
+  google.script.run.withSuccessHandler(render).withFailureHandler(function(e) { document.getElementById('resultArea').innerHTML = '<div class="main-card"><div class="empty-state"><p>' + esc(e.message) + '</p></div></div>'; }).lookupTender(id, USER_ID);
+}
+function render(r) {
+  var el = document.getElementById('resultArea');
+  if (!r.found) { el.innerHTML = '<div class="main-card"><div class="empty-state"><p><b>Not found</b></p><p style="margin-top:6px">' + esc(r.message) + '</p><textarea class="search-input" id="tenderText" placeholder="Paste tender details..." style="min-height:100px;margin-top:10px"></textarea><button class="btn btn-primary" onclick="analyzeText()" style="margin-top:8px">Analyze</button></div></div>'; return; }
+  var t = r.tender;
+   var h = '<div class="main-card"><div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px"><div style="text-align:center;flex-shrink:0"><div style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;background:' + (r.relevance >= 60 ? '#1B7A3D' : (r.relevance >= 30 ? '#E8913A' : '#c0392b')) + '">' + r.relevance + '%</div><div style="font-size:8px;color:#999;margin-top:2px">Profile Fit</div></div><div><div style="font-size:14px;font-weight:600">' + esc(t.title) + '</div><div style="font-size:12px;color:#888">' + esc(t.entity) + '</div></div></div>';
+  h += '<div class="info-grid"><div class="info-item"><strong>Value:</strong> ' + fmt(t.est_value) + ' RWF</div><div class="info-item"><strong>Method:</strong> ' + esc(t.method || 'N/A') + '</div><div class="info-item"><strong>Deadline:</strong> ' + esc(t.deadline || 'N/A') + '</div><div class="info-item"><strong>Bidders:</strong> ' + (t.num_tenderers || '?') + '</div><div class="info-item"><strong>Status:</strong> ' + esc(t.status || 'N/A') + '</div><div class="info-item"><strong>OCID:</strong> ' + esc(t.ocid) + '</div></div>';
+  if (t.description) h += '<div class="detail-block"><div class="detail-label">Description</div>' + esc(t.description) + '</div>';
+  if (r.buyer_snapshot) h += '<div class="detail-block"><div class="detail-label">Buyer Track Record</div>' + esc(r.buyer_snapshot).replace(/\n/g, '<br>') + '</div>';
+  if (r.predictions && Object.keys(r.predictions).length > 0) { var p = r.predictions;
+    h += '<div class="pred-section"><h4>📊 BigQuery Predictions</h4><div style="font-size:9px;color:#888;margin-bottom:6px">Historical patterns for this buyer</div>';
+    var wpct = p.win_probability ? Math.round(p.win_probability * 100) : null;
+    if (wpct) h += '<span class="pred-badge ' + (wpct >= 15 ? 'pred-high' : (wpct >= 5 ? 'pred-mid' : 'pred-low')) + '">' + wpct + '% historical win rate</span>';
+    h += '<div class="pred-grid">';
+    if (p.expected_bidders) h += '<div class="pred-item">Avg: <b>' + parseFloat(p.expected_bidders).toFixed(0) + ' bidders</b></div>';
+    if (p.recommended_bid) h += '<div class="pred-item">Bid: <b>' + fmt(p.recommended_bid) + ' RWF</b></div>';
+    if (p.price_ratio) h += '<div class="pred-item">Ratio: <b>' + parseFloat(p.price_ratio).toFixed(2) + 'x</b></div>';
+    if (p.amendment_pct != null) h += '<div class="pred-item">Risk: ' + (p.amendment_pct >= 40 ? '<span class="risk-warn">' + p.amendment_pct + '% amended</span>' : '<span class="risk-ok">' + p.amendment_pct + '% amended</span>') + '</div>';
+    h += '</div>';
+    if (p.best_months && p.best_months.length) { var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; h += '<div style="margin-top:8px;font-size:11px;color:#1B7A3D;font-weight:600">📅 Best months to bid: </div><div style="font-size:11px;color:#666">'; p.best_months.forEach(function(m, i) { h += '<b>' + months[m.month - 1] + '</b> (' + m.avg_bidders + ' bidders, ' + m.count + ' tenders)' + (i < p.best_months.length - 1 ? ', ' : ''); }); h += '</div>'; }
+    if (p.competitors && p.competitors.length) { h += '<div class="comp-list"><b>Top winners:</b><ul style="margin:4px 0 0 16px;padding:0">'; p.competitors.forEach(function(c) { h += '<li>' + esc(c) + '</li>'; }); h += '</ul></div>'; }
+    if (p.contact_phone || p.contact_email) h += '<div style="margin-top:8px;font-size:11px;color:#666">' + (p.contact_name ? '📞 <b>' + esc(p.contact_name) + '</b> · ' : '') + (p.contact_phone ? '📞 <b>' + esc(p.contact_phone) + '</b> · ' : '') + (p.contact_email ? '✉️ <b>' + esc(p.contact_email) + '</b>' : '') + '</div>';
+    h += '</div>';
+  }
+  var entEsc = esc(t.entity || '').replace(/'/g, "\\'"); var mth = esc(t.method || 'open').replace(/'/g, "\\'");
+  h += '<div class="tab-row"><button class="tab-btn active" onclick="switchTab(\'overview\',this)">Overview</button><button class="tab-btn" onclick="switchTab(\'risk\',this);loadRiskAnalysis(\'' + entEsc + '\',\'' + mth + '\',' + (t.est_value || 0) + ')">Risk Analysis 🔒</button></div>';
+  h += '<div class="tab-content active" id="tab-overview"><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn-xs" onclick="askAI(\'' + esc(t.ocid) + '\')">Ask AI</button><a class="btn-xs" href="https://www.transparency.org/en/report-corruption/rwanda" target="_blank" style="text-decoration:none;color:#c0392b;border-color:#c0392b">⚠️ Report Corruption</a></div></div>';
+  h += '<div class="tab-content" id="tab-risk"><div class="spinner" style="padding:20px;font-size:12px">Click Risk Analysis tab to load insights...</div></div>';
+  h += '</div>';
+
+  // Bid Pack card
+  h += '<div class="main-card" style="margin-top:14px">';
+  h += '<div class="detail-label" style="margin-bottom:8px">📦 Bid Preparation Pack — RWF 19,000</div>';
+  h += '<p style="font-size:12px;color:#888;line-height:1.6;margin:0 0 12px">Get a complete bid preparation pack: bid/no-bid recommendation, competitor analysis, pricing strategy, compliance checklist, and AI strategy recommendations. <b>No upload required</b> — we use 14 years of RPPA data.</p>';
+  h += '<button class="btn btn-primary" onclick="getBidPack(\'' + esc(t.ocid) + '\')" style="max-width:260px">📦 Get Bid Pack</button>';
+  h += '<div id="bidpack-area"></div>';
+  h += '</div>';
+
+  el.innerHTML = h;
+}
+function analyzeText() { var text = document.getElementById('tenderText').value.trim(); if (!text) return; document.getElementById('resultArea').innerHTML = '<div class="spinner">Analyzing...</div>'; google.script.run.withSuccessHandler(function(a) { document.getElementById('resultArea').innerHTML = '<div class="main-card"><div class="detail-block"><div class="detail-label">AI Analysis</div>' + md2html(a) + '</div></div>'; }).withFailureHandler(function(e) { document.getElementById('resultArea').innerHTML = '<div class="main-card"><div class="empty-state"><p>AI Error: ' + esc(e.message) + '</p></div></div>'; }).analyzeTenderText(text, USER_ID); }
+function askAI(ocid) { var q = prompt('Ask about this tender:'); if (!q) return; document.getElementById('resultArea').innerHTML = '<div class="spinner">Thinking...</div>'; google.script.run.withSuccessHandler(function(a) { document.getElementById('resultArea').innerHTML = '<div class="main-card"><div class="detail-block"><div class="detail-label">Answer</div>' + md2html(a) + '</div><button class="btn btn-primary" onclick="doLookup()" style="margin-top:8px">Back</button></div>'; }).withFailureHandler(function(e) { document.getElementById('resultArea').innerHTML = '<div class="main-card"><div class="empty-state"><p>AI Error: ' + esc(e.message) + '</p></div></div>'; }).askAboutTender(q, '', USER_ID); }
+function switchTab(name, btn) { document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); }); btn.classList.add('active'); document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); }); var t = document.getElementById('tab-' + name); if (t) t.classList.add('active'); }
+var riskLoaded = false;
+function loadRiskAnalysis(entity, method, estValue) {
+  if (riskLoaded) return;
+  var el = document.getElementById('tab-risk'); if (!el) return;
+  el.innerHTML = '<div class="spinner" style="padding:20px;font-size:12px">Loading risk analysis...</div>';
+  google.script.run.withSuccessHandler(function(data) {
+    if (data.blocked) { el.innerHTML = '<div class="risk-section"><h5>🔒 Trust & Risk Analysis</h5><div style="text-align:center;padding:12px;font-size:12px;color:#888">' + esc(data.message) + '<br><button class="btn-xs" onclick="navigate(\'upgrade\')" style="margin-top:8px;background:#2060C0;color:#fff;border:none">Upgrade Now</button></div></div>'; riskLoaded = true; return; }
+    if (data.error) { el.innerHTML = '<div class="empty-state"><p>Error: ' + esc(data.error) + '</p></div>'; return; }
+    var h = '<div class="risk-section"><h5>🔒 Trust & Risk Analysis</h5>';
+    var bn = data.bid_no_bid; var ci = data.price_ci; var bi = data.buyer_integrity;
+    var tr = data.timeline_risk; var cc = data.contract_completion;
+    var acg = data.award_contract_gap; var sl = data.signing_lag;
+    var sb = data.single_bidder_risk; var amr = data.amendment_value_ratio;
+    var co = data.cost_overrun; var ar = data.amendment_rationale;
+    if (bn) h += '<div style="text-align:center;padding:10px;margin-bottom:10px;font-size:13px;font-weight:700;border-radius:8px;' + ('BID' === bn.recommendation ? 'background:#d4edda;color:#155724' : 'MAYBE' === bn.recommendation ? 'background:#fff3cd;color:#856404' : 'background:#f8d7da;color:#721c24') + '">' + esc(bn.recommendation) + ' (' + bn.confidence + '% confidence)' + (bn.reasons ? '<br><small>' + esc(bn.reasons) + '</small>' : '') + '</div>';
+    h += '<div class="risk-grid">';
+    if (bi) h += '<div class="risk-item"><span class="rl integrity-' + esc(bi.label).toLowerCase() + '">Buyer Integrity</span><b>' + bi.score + '/100</b><small class="integrity-' + esc(bi.label).toLowerCase() + '">' + esc(bi.label) + '</small><br>Amendments: ' + bi.amendment_pct + '% · Cancel: ' + bi.cancellation_pct + '% · Single-bid: ' + bi.single_bidder_pct + '% · ' + bi.total_tenders + ' tenders</div>';
+    if (ci && ci.low) h += '<div class="risk-item"><span class="rl">Bid Price Range</span><b>' + fmt(ci.low) + ' – ' + fmt(ci.high) + ' RWF</b>Median: ' + fmt(ci.median) + ' (' + (ci.medianRatio || 92) + '% of estimate)</div>';
+    if (tr) h += '<div class="risk-item"><span class="rl">Timeline Risk</span><b>' + tr.risk_pct + '%</b><small>' + esc(tr.label) + '</small><br>' + tr.amendments_per_contract + ' amendments/contract, ' + tr.avg_contract_days + 'd avg duration</div>';
+    if (cc) h += '<div class="risk-item"><span class="rl">Completion Rate</span><b>' + cc.completion_pct + '%</b><small>' + esc(cc.label) + '</small><br>' + cc.completed + ' done / ' + cc.total + ' total (' + cc.active + ' active, ' + cc.cancelled + ' cancelled)</div>';
+    if (acg) h += '<div class="risk-item"><span class="rl">Value Inflation</span><b>' + (acg.gap_pct >= 0 ? '+' : '') + acg.gap_pct + '%</b>Contracts avg ' + acg.avg_ratio + 'x award (' + acg.count + ' contracts)</div>';
+    if (sl) h += '<div class="risk-item"><span class="rl">Signing Speed</span><b>' + sl.avg_lag_days + ' days</b><small>' + esc(sl.label) + '</small><br>Avg delay from award to signed</div>';
+    if (sb) h += '<div class="risk-item"><span class="rl">Single-Bidder</span><b>' + sb.pct + '%</b><small>' + esc(sb.label) + '</small><br>' + sb.single_bidder_count + ' of ' + sb.total_tenders + ' tenders</div>';
+    if (amr) h += '<div class="risk-item"><span class="rl">Amendment Rate</span><b>' + amr.amendments_per_contract + '/contract</b>' + amr.amendment_count + ' amendments / ' + amr.contract_count + ' contracts</div>';
+    if (co) h += '<div class="risk-item"><span class="rl">Amendments</span><b>' + co.avg_amendments_per_contract + '/contract</b><small>' + esc(co.label) + '</small><br>' + co.amendment_count + ' amendments, ' + co.contract_count + ' contracts</div>';
+    h += '</div>';
+    if (ar) h += '<div style="margin-top:8px;font-size:11px;color:#666;padding:10px;background:#fff;border-radius:8px;border:1px solid #eee"><b>Amendment Breakdown:</b> Cost overruns: ' + ar.cost_overrun + ' · Scope changes: ' + ar.scope_change + ' · Time extensions: ' + ar.time_extension + ' · Other: ' + ar.other + ' (Total: ' + ar.total + ')</div>';
+    h += '</div>';
+    el.innerHTML = h;
+    riskLoaded = true;
+  }).withFailureHandler(function(e) { el.innerHTML = '<div class="empty-state"><p>Error: ' + esc(e.message || '') + '</p></div>';   }).getTrustIntel(entity, method, estValue, USER_ID);
+}
+function fmt(v) { if (!v) return '0'; var n = Number(v); if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B'; if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M'; return n.toLocaleString(); }
+function esc(s) { if (!s) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function md2html(s) { if (!s) return ""; var h = String(s); h = h.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); h = h.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>'); h = h.replace(/`([^`]+)`/g, '<code>$1</code>'); h = h.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>'); h = h.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>'); h = h.replace(/\*([^*]+)\*/g, '<em>$1</em>'); h = h.replace(/^### (.+)$/gm, '<h4>$1</h4>'); h = h.replace(/^## (.+)$/gm, '<h3>$1</h3>'); h = h.replace(/^# (.+)$/gm, '<h2>$1</h2>'); h = h.replace(/^- (.+)$/gm, '<li>$1</li>'); h = h.replace(/^\d+\. (.+)$/gm, '<li>$1</li>'); h = h.replace(/(<li>.*<\/li>)/g, '<ul>$1</ul>'); h = h.replace(/<\/ul>\s*<ul>/g, ''); h = h.replace(/\n\n/g, '</p><p>'); h = '<p>' + h + '</p>'; h = h.replace(/<p><\/p>/g, ''); h = h.replace(/<p><ul>/g, '<ul>').replace(/<\/ul><\/p>/g, '</ul>'); h = h.replace(/<p><li>/g, '<li>').replace(/<\/li><\/p>/g, '</li>'); return h; }
+
+// ── Bid Pack functions ────────────────────────────────────────────────────────
+var bidPackOcid = '';
+var bidPackRef = '';
+
+function getBidPack(ocid) {
+  bidPackOcid = ocid;
+  var el = document.getElementById('bidpack-area');
+  if (!el) return;
+  el.innerHTML = '<div class="spinner" style="padding:14px;font-size:12px">Loading teaser...</div>';
+  el.style.display = 'block';
+  google.script.run.withSuccessHandler(function(data) {
+    if (data.error) { el.innerHTML = '<div class="empty-state"><p>' + esc(data.error) + '</p></div>'; return; }
+    if (data.already_purchased && data.pack) { renderBidPackReport(data.pack, el); return; }
+    if (data.already_purchased) { el.innerHTML = '<div style="padding:14px;text-align:center;font-size:12px;background:#fff3cd;border-radius:8px">Payment processing — <a href="#" onclick="verifyBidPack();return false" style="color:#2060C0;font-weight:600">check status</a></div>'; return; }
+    renderBidPackTeaser(data, el);
+  }).withFailureHandler(function(e) { el.innerHTML = '<div class="empty-state"><p>Error: ' + esc(e.message) + '</p></div>'; })
+  .getBidPackTeaser(ocid, USER_ID);
+}
+
+function renderBidPackTeaser(data, el) {
+  var h = '';
+  // JIR notice
+  if (data.is_jir) {
+    h += '<div style="padding:8px 10px;margin:8px 0;background:#fff3cd;border-radius:8px;font-size:11px;color:#856404">⚠️ This is a JobInRwanda tender. Historical RPPA data is limited — the Bid Pack uses AI analysis for compliance and strategy.</div>';
+  }
+  // VISIBLE
+  if (data.bid_no_bid) {
+    var bc = data.bid_no_bid.recommendation === 'BID' ? '#d4edda;color:#155724' : data.bid_no_bid.recommendation === 'MAYBE' ? '#fff3cd;color:#856404' : '#f8d7da;color:#721c24';
+    h += '<div style="text-align:center;padding:10px;margin:12px 0 6px;font-size:14px;font-weight:700;border-radius:8px;background:' + bc + '">' + esc(data.bid_no_bid.recommendation) + ' (' + data.bid_no_bid.confidence + '% confidence)' + (data.bid_no_bid.reasons ? '<br><small style="font-weight:400">' + esc(data.bid_no_bid.reasons) + '</small>' : '') + '</div>';
+  }
+  if (data.win_probability !== undefined && data.win_probability !== null) {
+    h += '<div style="display:flex;gap:8px;align-items:center;margin:8px 0;padding:8px;background:#E8F0FE;border-radius:8px">';
+    h += '<span style="font-size:11px;color:#555">Historical Win Rate:</span>';
+    h += '<span style="font-size:16px;font-weight:700;color:#2060C0">' + Math.round(data.win_probability * 100) + '%</span>';
+    h += '</div>';
+  }
+  // BLURRED
+  var blurItems = ['Bid price range (10th/50th/90th percentile)', 'Buyer integrity score + risk analysis', 'Top competitors + win history', 'Compliance checklist', 'Strategy recommendations'];
+  h += '<div style="margin:8px 0;padding:10px;background:#F0F4F8;border-radius:8px;opacity:0.65">';
+  blurItems.forEach(function(item) { h += '<div style="font-size:12px;color:#888;line-height:1.8">🔒 ' + item + '</div>'; });
+  h += '</div>';
+  // Payment
+  h += '<div style="text-align:center;padding:10px 0 4px;font-size:13px;font-weight:700">RWF 19,000 — one-time, no subscription</div>';
+  h += '<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">';
+  h += '<button class="btn-xs" onclick="showMoMoPayment()" style="background:#F4A940;color:#1C2833;border:none;font-weight:600">Pay with MoMo</button>';
+  h += '<button class="btn-xs" onclick="initBidPackPayment(\'airtel\')" style="background:#E53935;color:#fff;border:none">Airtel Money</button>';
+  h += '<button class="btn-xs" onclick="initBidPackPayment(\'bank\')">Bank Transfer</button>';
+  h += '</div>';
+  h += '<div id="bidpack-payment-ui" style="margin-top:6px"></div>';
+  h += '<p style="font-size:9px;color:#aaa;text-align:center;margin-top:8px">Based on historical data. Not a guarantee. See full disclaimer in report.</p>';
+  el.innerHTML = h;
+}
+
+function showMoMoPayment() {
+  var el = document.getElementById('bidpack-payment-ui'); if (!el) return;
+  el.innerHTML = '<div style="display:flex;gap:6px;align-items:center;margin-top:4px">' +
+    '<input id="bpmomo-phone" placeholder="0788xxxxxx" style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid #e8eaed;background:#F0F4F8;font-size:13px">' +
+    '<button class="btn-xs" onclick="initBidPackPayment(\'momo\')" style="background:#1B7A3D;color:#fff;border:none">Pay</button>' +
+    '</div>';
+}
+
+function initBidPackPayment(method) {
+  var phone = ''; if (method === 'momo') { phone = (document.getElementById('bpmomo-phone') || {}).value || ''; if (!phone) return alert('Enter MoMo phone number'); }
+  var el = document.getElementById('bidpack-area'); if (!el) return;
+  el.innerHTML += '<div class="spinner" style="padding:10px;font-size:11px">Processing payment...</div>';
+  google.script.run.withSuccessHandler(function(res) {
+    if (res.success && res.ref_id) {
+      bidPackRef = res.ref_id;
+      if (res.url) { window.open(res.url, '_blank'); }
+      var msg = res.message || 'Check your phone to approve the payment.';
+      el.innerHTML += '<div style="padding:8px;background:#d4edda;border-radius:8px;font-size:12px;color:#155724;text-align:center;margin-top:6px">' + esc(msg) + '<br><button class="btn-xs" onclick="verifyBidPack()" style="margin-top:6px;background:#2060C0;color:#fff;border:none">Check Payment Status</button></div>';
+    } else if (res.success && method === 'bank') {
+      var det = res.bank_details || {};
+      el.innerHTML += '<div style="padding:10px;background:#E8F0FE;border-radius:8px;font-size:12px;margin-top:6px"><b>Bank Transfer</b><br>Name: ' + esc(det.BANK_ACCOUNT_NAME || 'Umucyo Assistant') + '<br>Account: ' + esc(det.BANK_ACCOUNT_NUMBER || '—') + '<br>Bank: ' + esc(det.BANK_NAME || '—') + '<br><small>Submit proof after transfer. Admin will approve.</small></div>';
+    } else {
+      el.innerHTML += '<div class="empty-state" style="padding:8px"><p>' + esc(res.error || 'Payment failed') + '</p></div>';
+    }
+  }).withFailureHandler(function(e) { el.innerHTML += '<div class="empty-state" style="padding:8px"><p>Error: ' + esc(e.message) + '</p></div>'; })
+  .createBidPackPayment(bidPackOcid, USER_ID, method, phone);
+}
+
+function verifyBidPack() {
+  if (!bidPackRef) return;
+  var el = document.getElementById('bidpack-area'); if (!el) return;
+  el.innerHTML += '<div class="spinner" style="padding:8px;font-size:11px">Verifying payment...</div>';
+  google.script.run.withSuccessHandler(function(res) {
+    if (res.success && res.pack) { renderBidPackReport(res.pack, el); }
+    else { el.innerHTML += '<div style="padding:6px;font-size:12px;color:#888;text-align:center">' + esc(res.message || 'Payment not confirmed yet. Try again.') + '</div>'; }
+  }).withFailureHandler(function(e) { el.innerHTML += '<div class="empty-state" style="padding:6px"><p>' + esc(e.message) + '</p></div>'; })
+  .verifyBidPackPayment(bidPackRef);
+}
+
+function renderBidPackReport(pack, el) {
+  var h = '<div style="margin-top:12px;border-top:2px solid #2060C0;padding-top:12px">';
+  h += '<div style="display:flex;gap:6px;margin-bottom:12px"><button class="btn-xs" onclick="shareReport()" style="background:#2060C0;color:#fff;border:none">📤 Share</button><button class="btn-xs" onclick="alert(\'Report will be emailed to ' + (USER_ID || 'your email') + '.\')">✉️ Email</button></div>';
+  // Bid/No-Bid
+  if (pack.bid_no_bid) {
+    var bc = pack.bid_no_bid.recommendation === 'BID' ? '#d4edda;color:#155724' : pack.bid_no_bid.recommendation === 'MAYBE' ? '#fff3cd;color:#856404' : '#f8d7da;color:#721c24';
+    h += '<div style="text-align:center;padding:10px;margin-bottom:10px;font-size:14px;font-weight:700;border-radius:8px;background:' + bc + '">' + esc(pack.bid_no_bid.recommendation) + ' (' + pack.bid_no_bid.confidence + '% confidence)<br><small style="font-weight:400">' + esc(pack.bid_no_bid.reasons || '') + '</small></div>';
+  }
+  // Price
+  if (pack.price_ci) h += '<div class="risk-item"><span class="rl">Bid Price Range</span><b>' + fmt(pack.price_ci.low) + ' – ' + fmt(pack.price_ci.high) + '</b>Median: ' + fmt(pack.price_ci.median) + '</div>';
+  // Integrity
+  if (pack.buyer_integrity) h += '<div class="risk-item"><span class="rl">Buyer Integrity</span><b>' + pack.buyer_integrity.score + '/100 — ' + esc(pack.buyer_integrity.label) + '</b>Amendments: ' + pack.buyer_integrity.amendment_pct + '% · Single-bid: ' + pack.buyer_integrity.single_bidder_pct + '%</div>';
+  // Competitors
+  if (pack.competitors && pack.competitors.length) {
+    h += '<div style="margin:6px 0;font-size:11px;color:#555"><b>Top Competitors:</b> ' + pack.competitors.map(function(c) { return esc(c.name) + ' (' + c.wins + ' wins)'; }).join(', ') + '</div>';
+  }
+  // Best months
+  if (pack.best_months && pack.best_months.length) {
+    var mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    h += '<div style="margin:6px 0;font-size:11px;color:#555"><b>Best Month:</b> ' + pack.best_months.map(function(m) { return mo[m.month-1]; }).join(', ') + '</div>';
+  }
+  // Compliance
+  if (pack.compliance_checklist) {
+    h += '<div class="detail-block" style="margin-top:8px"><div class="detail-label">Compliance Checklist</div><div style="font-size:12px;color:#555;line-height:1.6;white-space:pre-wrap">' + md2html(pack.compliance_checklist) + '</div></div>';
+  }
+  // Strategy
+  if (pack.strategy_recommendations) {
+    h += '<div class="detail-block" style="margin-top:8px"><div class="detail-label">Strategy Recommendations</div><div style="font-size:12px;color:#555;line-height:1.6;white-space:pre-wrap">' + md2html(pack.strategy_recommendations) + '</div></div>';
+  }
+  // Disclaimer
+  h += '<div style="margin-top:10px;padding:8px 10px;background:#fff3cd;border-radius:8px;font-size:10px;color:#856404;line-height:1.5">⚠️ ' + esc(pack.disclaimer || '') + '</div>';
+  h += '</div>';
+  el.innerHTML = h;
+}
+
+function shareReport() {
+  var url = window.location.href;
+  var text = 'Umucyo Bid Pack for tender — get yours at ' + APP_URL;
+  if (navigator.share) { navigator.share({ title: 'Bid Pack Report', text: text, url: url }).catch(function(){}); }
+  else { prompt('Share this link:', url); }
+}
+// ── End Bid Pack functions ────────────────────────────────────────────────────
+var APP_URL = '';
+var DEPLOY_URL = '<?= ScriptApp.getService().getUrl() ?>';
+function navigate(p) { var url = '?page=' + p + (USER_ID ? '&uid=' + encodeURIComponent(USER_ID) : ''); if (DEPLOY_URL) { window.top.location.href = DEPLOY_URL + url; return; } if (APP_URL) { window.top.location.href = APP_URL + url; return; } google.script.run.withSuccessHandler(function(u) { APP_URL = u; window.top.location.href = u + url; }).withFailureHandler(function() { window.top.location.href = url; }).getAppUrl(); }
+google.script.run.withSuccessHandler(function(url) { APP_URL = url; }).getAppUrl();
+google.script.run.withSuccessHandler(function(isAdmin){if(isAdmin)document.querySelectorAll('.admin-link').forEach(function(e){e.style.display='flex';});}).isAdmin(USER_ID);
+
+setTimeout(function(){
+  if (LOOKUP) { document.getElementById('lookupInput').value = LOOKUP; doLookup(); }
+}, 400);
+</script>
+<footer style="text-align:center;padding:16px 12px 24px;font-size:10px;color:#aaa;line-height:1.8">
+<p>🤖 AI-generated\ insights\ may\ contain\ inaccuracies\.\ Always\ verify\ with\ official\ <a\ href="https://umucyo\.gov\.rw"\ target="_blank">Umucyo</a>\ sources\.\ ·\ Report\ procurement\ corruption:\ <a\ href="https://www\.transparency\.org/en/report-corruption/rwanda"\ target="_blank"\ style="font-weight:600">TI-Rwanda\ ALAC</a>\ ·\ \+250\ 788\ 309\ 563 <a href="https://umucyo.gov.rw" target="_blank" style="color:#2060C0">Umucyo</a> sources.</p>
+<p><a href="?page=terms" onclick="navigate('terms');return false" style="color:#2060C0">Terms</a> · <a href="?page=privacy" onclick="navigate('privacy');return false" style="color:#2060C0">Privacy</a></p>
+</footer>
+</body>
+</html>

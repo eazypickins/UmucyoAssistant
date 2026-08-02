@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head><title>Terms of Service — Umucyo Assistant</title>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #F4F6F9; color: #1C2833; }
+    .app-header { background: #fff; border-bottom: 1px solid #e8eaed; padding: 14px 18px 10px; display: flex; align-items: flex-start; justify-content: space-between; }
+    .app-brand { line-height: 1.2; }
+    .app-title { font-size: 22px; font-weight: 700; color: #1C2833; }
+    .app-title span { color: #2060C0; }
+    .app-tagline { font-size: 12px; color: #999; margin-top: 1px; }
+    .lang-switch { display: flex; gap: 3px; }
+    .lang-btn { padding: 5px 10px; border-radius: 6px; border: 1px solid #e0e0e0; background: #fff; font-size: 11px; font-weight: 600; color: #888; cursor: pointer; }
+    .lang-btn.active { background: #2060C0; color: #fff; border-color: #2060C0; }
+    .navbar { background: #fff; border-bottom: 1px solid #e8eaed; position: relative; top: 0; z-index: 99; padding: 0 12px; display: flex; align-items: center; justify-content: center; overflow: visible; -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 2px; }
+    .navbar::-webkit-scrollbar { display: none; }
+    .nav-group { position: relative; flex-shrink: 0; }
+    .nav-tab { display: flex; align-items: center; gap: 5px; padding: 10px 12px; font-size: 13px; font-weight: 500; color: #666; cursor: pointer; border: none; background: transparent; white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.15s; font-family: inherit; }
+    .nav-tab:hover { color: #333; background: #F0F4F8; border-radius: 8px 8px 0 0; }
+    .nav-tab.active { color: #2060C0; font-weight: 600; border-bottom-color: #2060C0; }
+    .nav-icon { font-size: 15px; line-height: 1; }
+    .nav-dropdown { display: none; position: absolute; top: 100%; left: 0; background: #fff; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.12); min-width: 200px; padding: 6px; z-index: 100; }
+    .nav-dropdown.show { display: block; }
+    .dd-item { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 8px; font-size: 12px; color: #555; cursor: pointer; transition: background 0.1s; white-space: nowrap; }
+    .dd-item:hover { background: #E8F0FE; color: #2060C0; }
+    .dd-item .nav-icon { font-size: 13px; }
+    .btn { padding: 7px 12px; border-radius: 6px; border: none; font-size: 12px; font-weight: 500; cursor: pointer; }
+    .btn-ghost { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.2); }
+    .container { max-width: 700px; margin: 0 auto; padding: 12px 16px 30px; }
+    .section { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 12px; }
+    .section h3 { font-size: 15px; font-weight: 600; margin-bottom: 10px; color: #1C2833; }
+    .section p, .section li { font-size: 13px; line-height: 1.6; color: #444; margin-bottom: 8px; }
+    .section ul { padding-left: 20px; margin-bottom: 8px; }
+    .section li { margin-bottom: 4px; }
+    .footer-note { text-align: center; font-size: 11px; color: #999; margin-top: 20px; padding: 10px; }
+  </style>
+</head>
+<body>
+<div class="app-header">
+  <div class="app-brand">
+    <div class="app-title">Umucyo<span>Assistant</span></div>
+    <div class="app-tagline">Your AI-powered procurement partner</div>
+  </div>
+  <div class="lang-switch">
+    <button class="lang-btn active" onclick="setLang('EN')">EN</button>
+    <button class="lang-btn" onclick="setLang('FR')">FR</button>
+    <button class="lang-btn" onclick="setLang('KIN')">KIN</button>
+  </div>
+</div>
+<div class="navbar" id="navbar">
+  <div class="nav-group">
+    <button class="nav-tab" onclick="navigate('dashboard')"><span class="nav-icon">🏠</span>Home</button>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab" onclick="toggleDD('dd-opp')"><span class="nav-icon">📋</span>Opportunities ▾</button>
+    <div class="nav-dropdown" id="dd-opp">
+      <div class="dd-item" onclick="navigate('find')"><span class="nav-icon">🔍</span>Find Matches</div>
+      <div class="dd-item" onclick="navigate('check')"><span class="nav-icon">📋</span>Check Tender</div>
+    </div>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab" onclick="toggleDD('dd-market')"><span class="nav-icon">📊</span>Market Intel ▾</button>
+    <div class="nav-dropdown" id="dd-market">
+      <div class="dd-item" onclick="navigate('market')"><span class="nav-icon">📊</span>Market Dashboard</div>
+      <div class="dd-item" onclick="navigate('calendar')"><span class="nav-icon">📅</span>Procurement Calendar</div>
+      <div class="dd-item" onclick="navigate('ratings')"><span class="nav-icon">📊</span>Procurement Instability</div>
+      <div class="dd-item" onclick="navigate('sector')"><span class="nav-icon">🏗️</span>Sector Reports</div>
+      <div class="dd-item" onclick="navigate('competitor')"><span class="nav-icon">🔍</span>Competitors</div>
+    </div>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab" onclick="toggleDD('dd-tools')"><span class="nav-icon">🧰</span>My Tools ▾</button>
+    <div class="nav-dropdown" id="dd-tools">
+      <div class="dd-item" onclick="navigate('dna')"><span class="nav-icon">🧬</span>My Business DNA</div>
+      <div class="dd-item" onclick="navigate('portfolio')"><span class="nav-icon">🏆</span>My Portfolio</div>
+      <div class="dd-item" onclick="navigate('insights')"><span class="nav-icon">💡</span>My Insights</div>
+      <div class="dd-item" onclick="navigate('compliance')"><span class="nav-icon">📝</span>Review Proposal</div>
+      <div class="dd-item" onclick="navigate('jv')"><span class="nav-icon">🤝</span>JV Partners</div>
+    </div>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab" onclick="toggleDD('dd-learn')"><span class="nav-icon">📖</span>Learn & Upgrade ▾</button>
+    <div class="nav-dropdown" id="dd-learn">
+      <div class="dd-item" onclick="navigate('learn')"><span class="nav-icon">📖</span>Learn & Practice</div>
+      <div class="dd-item" onclick="navigate('upgrade')"><span class="nav-icon">⭐</span>Upgrade Plan</div>
+      <div class="dd-item" onclick="navigate('guide')"><span class="nav-icon">📖</span>User Guide</div>
+      <div class="dd-item admin-link" onclick="navigate('admin')" style="display:none"><span class="nav-icon">⚙️</span>Admin</div>
+    </div>
+  </div>
+</div>
+<div class="container">
+
+  <div class="section">
+    <h3>1. Acceptance of Terms</h3>
+    <p>By accessing or using Umucyo Assistant ("the Service"), you agree to be bound by these Terms of Service. If you do not agree, do not use the Service.</p>
+  </div>
+
+  <div class="section">
+    <h3>2. Description of Service</h3>
+    <p>Umucyo Assistant is an AI-powered procurement intelligence tool designed to help Rwandan SMEs discover, evaluate, and prepare for public procurement opportunities. The Service provides tender matching, compliance checking, market analytics, and related features.</p>
+  </div>
+
+  <div class="section">
+    <h3>3. User Responsibilities</h3>
+    <ul>
+      <li>You are responsible for maintaining the accuracy of your business profile and preferences.</li>
+      <li>You agree not to misuse the Service, including attempting to reverse-engineer, scrape, or disrupt its operation.</li>
+      <li>You are responsible for keeping your account credentials confidential.</li>
+      <li>The Service provides AI-generated insights for informational purposes only. Final procurement decisions remain your responsibility.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h3>4. Subscription & Payment</h3>
+    <p>The Service offers free and paid subscription tiers. Paid features require a valid subscription. Subscription fees are non-refundable unless otherwise stated. We reserve the right to modify pricing with reasonable notice. Free trials are limited to one per user.</p>
+  </div>
+
+  <div class="section">
+    <h3>5. Limitation of Liability</h3>
+    <p>The Service is provided "as is" without warranties of any kind. We do not guarantee tender awards, contract wins, or business outcomes. To the fullest extent permitted by law, Umucyo Assistant and its operators shall not be liable for any indirect, incidental, or consequential damages arising from your use of the Service.</p>
+  </div>
+
+  <div class="section">
+    <h3>6. Intellectual Property</h3>
+    <p>All content, algorithms, branding, and software constituting the Service are the intellectual property of Umucyo Assistant / RPPA Solutions. You may not copy, modify, or redistribute any part of the Service without written permission.</p>
+  </div>
+
+  <div class="section">
+    <h3>7. Termination</h3>
+    <p>We reserve the right to suspend or terminate access to the Service for violations of these Terms. Upon termination, your right to use the Service ceases immediately. Data retention after termination is governed by our Privacy Policy.</p>
+  </div>
+
+  <div class="section">
+    <h3>8. Contact</h3>
+    <p>For questions about these Terms, contact us at <b>geraldnoria@gmail.com</b>.</p>
+  </div>
+
+  <div class="footer-note">Last updated: May 2026. Umucyo Assistant is an AI-powered tool and does not constitute legal advice.</div>
+
+</div>
+<script>
+var USER_ID = '<?= uid ?>' || '';
+window.toggleDD = function(id) { var target = document.getElementById(id); document.querySelectorAll('.nav-dropdown').forEach(function(d) { if (d !== target) d.classList.remove('show'); }); target.classList.toggle('show'); };
+document.addEventListener('click', function(e) { if (!e.target.closest('.nav-group')) { document.querySelectorAll('.nav-dropdown').forEach(function(d) { d.classList.remove('show'); }); } });
+window.setLang = function(l) { document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.toggle('active', b.textContent === l); }); };
+var APP_URL = null;
+var DEPLOY_URL = '<?= ScriptApp.getService().getUrl() ?>';
+function navigate(p) { var url = '?page=' + p + (USER_ID ? '&uid=' + encodeURIComponent(USER_ID) : ''); if (DEPLOY_URL) { window.top.location.href = DEPLOY_URL + url; return; } if (APP_URL) { window.top.location.href = APP_URL + url; return; } google.script.run.withSuccessHandler(function(u) { APP_URL = u; window.top.location.href = u + url; }).withFailureHandler(function() { window.top.location.href = url; }).getAppUrl(); }
+function goBack() { navigate('dashboard'); }
+google.script.run.withSuccessHandler(function(url) { APP_URL = url; }).getAppUrl();
+google.script.run.withSuccessHandler(function(isAdmin){if(isAdmin)document.querySelectorAll('.admin-link').forEach(function(e){e.style.display='flex';});}).isAdmin(USER_ID);
+</script>
+</body>
+</html>

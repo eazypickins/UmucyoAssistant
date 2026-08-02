@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head><title>Umucyo Assistant - Procurement Intelligence</title>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; background: #F4F6F9; color: #1C2833; min-height: 100vh; }
+    .header { position: sticky; top: 0; z-index: 100; background: #fff; border-bottom: 1px solid #eaeaea; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .header-top { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 8px; }
+    .header-brand { font-size: 17px; font-weight: 700; color: #1C2833; }
+    .header-brand span { color: #2060C0; }
+    .nav-scroll { display: flex; overflow-x: auto; gap: 2px; padding: 0 12px 4px; scrollbar-width: none; }
+    .nav-scroll::-webkit-scrollbar { display: none; }
+    .nav-tab { flex-shrink: 0; padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; color: #666; background: transparent; border: none; cursor: pointer; white-space: nowrap; text-decoration: none; display: inline-block; }
+    .nav-tab.active { background: #2060C0; color: #fff; font-weight: 600; }
+
+    .app-header { background: #fff; border-bottom: 1px solid #e8eaed; padding: 14px 18px 10px; display: flex; align-items: flex-start; justify-content: space-between; }
+    .app-brand { line-height: 1.2; }
+    .app-title { font-size: 22px; font-weight: 700; color: #1C2833; }
+    .app-title span { color: #2060C0; }
+    .app-tagline { font-size: 12px; color: #999; margin-top: 1px; }
+    .navbar { background: #fff; border-bottom: 1px solid #e8eaed; position: relative; top: 0; z-index: 99; padding: 0 12px; display: flex; align-items: center; justify-content: center; overflow: visible; -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 2px; }
+    .nav-group { position: relative; flex-shrink: 0; }
+    .nav-dropdown { display: none; position: absolute; top: 100%; left: 0; background: #fff; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.12); min-width: 200px; padding: 6px; z-index: 100; }
+    .nav-dropdown.show { display: block; }
+    .dd-item { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 8px; font-size: 12px; color: #555; cursor: pointer; transition: background 0.1s; white-space: nowrap; }
+    .dd-item:hover { background: #E8F0FE; color: #2060C0; }
+    .container { max-width: 960px; margin: 0 auto; padding: 16px; }
+    @media(min-width:1200px){.container{max-width:1100px}}
+    .card { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 12px; }
+    .card-header { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 12px; }
+    .stat-row { display: flex; gap: 8px; margin-bottom: 8px; }
+    .stat-card { flex: 1; text-align: center; padding: 10px 6px; background: #F0F4F8; border-radius: 10px; }
+    .stat-num { font-size: 20px; font-weight: 700; color: #1C2833; }
+    .stat-label { font-size: 10px; color: #888; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.3px; }
+    .table-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f4f4f4; font-size: 12px; }
+    .table-row:last-child { border-bottom: none; }
+    .row-main { flex: 1; min-width: 0; }
+    .row-sub { font-size: 10px; color: #999; margin-top: 1px; }
+    .row-value { text-align: right; font-weight: 600; margin-left: 10px; white-space: nowrap; }
+    .bar-container { height: 5px; background: #eee; border-radius: 3px; margin-top: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg,#2060C0,#F4A940); }
+    .badge { font-size: 10px; padding: 2px 6px; border-radius: 8px; font-weight: 600; }
+    .badge-red { background: #f8d7da; color: #721c24; }
+    .badge-yellow { background: #fff3cd; color: #856404; }
+    .badge-green { background: #d4edda; color: #155724; }
+    .spinner { text-align: center; padding: 30px; color: #999; font-size: 13px; }
+  </style>
+</head>
+<body>
+<div class="app-header"><div class="app-brand"><div class="app-title">Umucyo<span>Assistant</span></div><div class="app-tagline">Your AI-powered procurement partner</div></div></div>
+<div class="navbar" id="navbar">
+  <div class="nav-group"><button class="nav-tab" onclick="navigate('dashboard')">🏠 Home</button></div>
+  <div class="nav-group"><button class="nav-tab" onclick="toggleDD('dd-opp')">📋 Opportunities ▾</button><div class="nav-dropdown" id="dd-opp"><div class="dd-item" onclick="navigate('find')">🔍 Find Matches</div><div class="dd-item" onclick="navigate('check')">📋 Check Tender</div></div></div>
+  <div class="nav-group"><button class="nav-tab active" onclick="toggleDD('dd-market')">📊 Market Intel ▾</button><div class="nav-dropdown" id="dd-market"><div class="dd-item" onclick="navigate('market')">📊 Dashboard</div><div class="dd-item" onclick="navigate('calendar')">📅 Calendar</div><div class="dd-item" onclick="navigate('ratings')">💰 Ratings</div><div class="dd-item" onclick="navigate('sector')">🏗️ Sectors</div><div class="dd-item" onclick="navigate('competitor')">🔍 Competitors</div></div></div>
+  <div class="nav-group"><button class="nav-tab" onclick="toggleDD('dd-tools')">🧰 My Tools ▾</button><div class="nav-dropdown" id="dd-tools"><div class="dd-item" onclick="navigate('dna')">🧬 Business DNA</div><div class="dd-item" onclick="navigate('portfolio')">🏆 Portfolio</div><div class="dd-item" onclick="navigate('insights')">💡 Insights</div><div class="dd-item" onclick="navigate('compliance')">📝 Review Proposal</div><div class="dd-item" onclick="navigate('jv')">🤝 JV Partners</div></div></div>
+  <div class="nav-group"><button class="nav-tab" onclick="toggleDD('dd-learn')">📖 Learn & Upgrade ▾</button><div class="nav-dropdown" id="dd-learn"><div class="dd-item" onclick="navigate('learn')">📖 Learn</div><div class="dd-item" onclick="navigate('upgrade')">⭐ Upgrade</div><div class="dd-item" onclick="navigate('guide')">📖 User Guide</div><div class="dd-item admin-link" onclick="navigate('admin')" style="display:none">⚙️ Admin</div></div></div>
+</div>
+<div class="container" id="content"><div class="spinner">Loading...</div></div>
+<script>
+var USER_ID = '<?= uid ?>' || '';
+window.toggleDD = function(id) { var target = document.getElementById(id); document.querySelectorAll('.nav-dropdown').forEach(function(d) { if (d !== target) d.classList.remove('show'); }); target.classList.toggle('show'); };
+document.addEventListener('click', function(e) { if (!e.target.closest('.nav-group')) { document.querySelectorAll('.nav-dropdown').forEach(function(d) { d.classList.remove('show'); }); } });
+function load(){
+  google.script.run.withSuccessHandler(render).withFailureHandler(function(e){document.getElementById('content').innerHTML='<div class="card"><p style="color:#c0392b">'+esc(e.message)+'</p></div>';}).getMarketDashboardData();
+}
+function render(d){
+  var h='';
+
+  if(d.topSectors && d.topSectors.length){
+    h+='<div class="card"><div class="card-header">Top Sectors</div>';
+    var maxS = d.topSectors[0].count || 1;
+    d.topSectors.slice(0,10).forEach(function(s){var pct=Math.round((s.count||0)/maxS*100);h+='<div class="table-row"><div class="row-main"><b>'+esc(s.sector)+'</b><div class="bar-container"><div class="bar-fill" style="width:'+pct+'%"></div></div></div><div class="row-value">'+fmtNum(s.count)+' tenders</div></div>';});
+    h+='</div>';
+  }
+
+  if(d.topBuyers && d.topBuyers.length){
+    h+='<div class="card"><div class="card-header">Top Buyers ('+d.topBuyers.length+')</div>';
+    var maxB = d.topBuyers[0].tender_count || 1;
+    d.topBuyers.slice(0,10).forEach(function(b){var pct=Math.round((b.tender_count||0)/maxB*100);h+='<div class="table-row"><div class="row-main"><b>'+esc(b.entity)+'</b><div class="bar-container"><div class="bar-fill" style="width:'+pct+'%"></div></div></div><div class="row-value">'+fmtNum(b.tender_count)+' tenders</div><div class="row-value">'+b.avg_bidders+' bidders</div></div>';});
+    h+='</div>';
+  }
+
+  document.getElementById('content').innerHTML=h||'<div class="card"><p>No market data available. Try syncing tenders from BigQuery first.</p></div>';
+  loadSectorDifficulty();
+}
+function fmtNum(n){var v=parseInt(n)||0;if(v>=1e6)return (v/1e6).toFixed(1)+'M';if(v>=1e3)return (v/1e3).toFixed(1)+'K';return v.toString();}
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function loadSectorDifficulty(){
+  var sectors = ['works','goods','services'];
+  var el = document.createElement('div'); el.id = 'sectorDifficulty'; document.getElementById('content').appendChild(el);
+  el.innerHTML = '<div class="card"><div class="card-header">🔒 Sector Entry Difficulty <span style="font-size:10px;color:#F4A940">Premium</span></div><div class="spinner">Loading...</div></div>';
+  var results = [];
+  var done = 0;
+  sectors.forEach(function(s) {
+    google.script.run.withSuccessHandler(function(d) {
+      done++;
+      if (!d.blocked && d) results.push(d);
+      if (done === sectors.length) renderDifficulty(results);
+    }).getSectorDifficulty(s, USER_ID);
+  });
+}
+function renderDifficulty(data){
+  var el = document.getElementById('sectorDifficulty');
+  if (!el) return;
+  if (!data.length) { el.innerHTML = '<div class="card"><div class="card-header">Sector Entry Difficulty</div><div style="padding:12px;font-size:12px;color:#888;text-align:center">Upgrade to Premium to see sector difficulty ratings.</div></div>'; return; }
+  var h = '<div class="card"><div class="card-header">Sector Entry Difficulty</div>';
+  data.sort(function(a,b){return a.avg_bidders - b.avg_bidders;}).forEach(function(d){
+    var bc = d.barrier === 'High' ? '#c0392b' : (d.barrier === 'Medium' ? '#E8913A' : '#1B7A3D');
+    h += '<div class="table-row"><div class="row-main"><b>'+esc(d.sector)+'</b><div class="row-sub">'+d.avg_bidders+' avg bidders · '+d.total_tenders+' tenders</div></div><div class="row-value">'+d.incumbent_win_pct+'% incumbents</div><div class="row-value" style="color:'+bc+';font-weight:600">'+d.barrier+'</div></div>';
+  });
+  h += '</div>';
+  el.innerHTML = h;
+}
+load();
+var APP_URL = null;
+var DEPLOY_URL = '<?= ScriptApp.getService().getUrl() ?>';
+function navigate(page) {
+  var url = '?page=' + page + (USER_ID ? '&uid=' + encodeURIComponent(USER_ID) : '');
+  if (DEPLOY_URL) { window.top.location.href = DEPLOY_URL + url; return; }
+  if (APP_URL) { window.top.location.href = APP_URL + url; return; }
+  google.script.run.withSuccessHandler(function(u) { APP_URL = u; window.top.location.href = u + url; }).withFailureHandler(function() { window.top.location.href = url; }).getAppUrl();
+}
+google.script.run.withSuccessHandler(function(url) { APP_URL = url; }).getAppUrl();
+google.script.run.withSuccessHandler(function(isAdmin){if(isAdmin)document.querySelectorAll('.admin-link').forEach(function(e){e.style.display='flex';});}).isAdmin(USER_ID);
+</script>
+<footer style="text-align:center;padding:16px 12px 24px;font-size:10px;color:#aaa;line-height:1.8">
+<p>🤖 AI-generated\ insights\ may\ contain\ inaccuracies\.\ Always\ verify\ with\ official\ <a\ href="https://umucyo\.gov\.rw"\ target="_blank">Umucyo</a>\ sources\.\ ·\ Report\ procurement\ corruption:\ <a\ href="https://www\.transparency\.org/en/report-corruption/rwanda"\ target="_blank"\ style="font-weight:600">TI-Rwanda\ ALAC</a>\ ·\ \+250\ 788\ 309\ 563 <a href="https://umucyo.gov.rw" target="_blank" style="color:#2060C0">Umucyo</a> sources.</p>
+<p><a href="?page=terms" onclick="navigate('terms');return false" style="color:#2060C0">Terms</a> · <a href="?page=privacy" onclick="navigate('privacy');return false" style="color:#2060C0">Privacy</a></p>
+</footer>
+</body>
+</html>
