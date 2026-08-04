@@ -1,0 +1,716 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head><title>Umucyo Assistant - Procurement Intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #F4F6F9;
+      color: #1C2833;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .wizard {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      width: 100%;
+      max-width: 520px;
+      overflow: hidden;
+    }
+
+    .wizard-header {
+      background: #1C2833;
+      color: white;
+      padding: 20px 24px 16px;
+    }
+
+    .wizard-header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .progress-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      transition: background 0.2s;
+    }
+
+    .dot.active { background: #2060C0; }
+    .dot.done { background: #1B7A3D; }
+
+    .step {
+      display: none;
+      padding: 24px;
+    }
+
+    .step.active { display: block; }
+
+    .step-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1C2833;
+      margin-bottom: 4px;
+    }
+
+    .step-subtitle {
+      font-size: 13px;
+      color: #777;
+      margin-bottom: 18px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #444;
+      margin-bottom: 4px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.15s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #2060C0;
+    }
+
+    .hint {
+      font-size: 11px;
+      color: #999;
+      margin-top: 2px;
+    }
+
+    .inline-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .inline-row .form-group { flex: 1; }
+
+    .checkbox-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #555;
+      cursor: pointer;
+      padding: 6px 10px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+
+    .checkbox-item.selected {
+      background: #e8f5e9;
+      border-color: #1B7A3D;
+      color: #1C2833;
+    }
+
+    .checkbox-item input { display: none; }
+
+    /* Psychographic options */
+    .psycho-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .psycho-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border: 2px solid #e8e8e8;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: 13px;
+    }
+
+    .psycho-option:hover { border-color: #ccc; }
+
+    .psycho-option.selected {
+      border-color: #2060C0;
+      background: #f0f3ff;
+    }
+
+    .psycho-option input { display: none; }
+
+    .psycho-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .psycho-label {
+      font-weight: 500;
+      color: #1C2833;
+    }
+
+    .psycho-desc {
+      font-size: 11px;
+      color: #888;
+    }
+
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 24px 24px;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-back {
+      background: #f0f0f0;
+      color: #666;
+    }
+
+    .btn-next {
+      background: #2060C0;
+      color: white;
+      flex: 1;
+    }
+
+    .btn-next:hover { background: #3a56d4; }
+
+    .btn-save {
+      background: #1B7A3D;
+      color: white;
+      flex: 1;
+    }
+
+    .btn-save:hover { background: #165A2E; }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    #status {
+      text-align: center;
+      font-size: 13px;
+      padding: 0 24px 16px;
+      color: #1B7A3D;
+    }
+
+    #status.error { color: #d32f2f; }
+
+    .skip-link {
+      text-align: center;
+      font-size: 12px;
+      color: #999;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .skip-link:hover { color: #666; }
+  </style>
+</head>
+
+<body>
+
+<div class="wizard">
+  <div class="wizard-header">
+    <h1>My Business DNA</h1>
+    <div class="progress-dots">
+      <div class="dot active" id="dot1"></div>
+      <div class="dot" id="dot2"></div>
+      <div class="dot" id="dot3"></div>
+      <div class="dot" id="dot4"></div>
+      <div class="dot" id="dot5"></div>
+    </div>
+  </div>
+
+  <!-- STEP 1: Company Identity -->
+  <div class="step active" id="step1">
+    <div class="step-title">Who are you?</div>
+    <div class="step-subtitle">Your company basics — this identifies you in the system.</div>
+
+    <div class="form-group">
+      <label>Company Name *</label>
+      <input id="companyName" placeholder="e.g. GreenBuild Construction Ltd">
+    </div>
+
+    <div class="form-group">
+      <label>TIN (Tax Identification Number)</label>
+      <input id="tin" placeholder="e.g. 123456789" type="text">
+      <div class="hint">Helps us verify eligibility and match tenders to your registration level. Don't have one? Skip for now.</div>
+    </div>
+
+    <div class="inline-row">
+      <div class="form-group">
+        <label>Year Established</label>
+        <input id="yearEst" placeholder="e.g. 2019" type="number">
+      </div>
+      <div class="form-group">
+        <label>Company Size</label>
+        <select id="companySize">
+          <option value="">Select</option>
+          <option value="1-5">1–5 people</option>
+          <option value="6-20">6–20 people</option>
+          <option value="20-50">20–50 people</option>
+          <option value="50+">50+ people</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Business Type</label>
+      <div class="checkbox-group">
+        <div class="checkbox-item" onclick="toggleCheck(this)">
+          <input type="checkbox" id="womenLed">
+          <span>Women-led</span>
+        </div>
+        <div class="checkbox-item" onclick="toggleCheck(this)">
+          <input type="checkbox" id="youthLed">
+          <span>Youth-led</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>RDB Registered?</label>
+      <select id="rdbReg">
+        <option value="">Select</option>
+        <option value="yes">Yes</option>
+        <option value="in_progress">In progress</option>
+        <option value="no">No</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- STEP 2: What You Do -->
+  <div class="step" id="step2">
+    <div class="step-title">What do you do?</div>
+    <div class="step-subtitle">Help us understand your capabilities.</div>
+
+    <div class="form-group">
+      <label>Primary Sector *</label>
+      <select id="sector">
+        <option value="">Select sector</option>
+        <option value="construction">Construction & Infrastructure</option>
+        <option value="it">IT & Software</option>
+        <option value="catering">Catering & Food Services</option>
+        <option value="cleaning">Cleaning Services</option>
+        <option value="consulting">Consulting & Advisory</option>
+        <option value="transport">Transport & Logistics</option>
+        <option value="agriculture">Agriculture</option>
+        <option value="health">Health & Medical</option>
+        <option value="education">Education & Training</option>
+        <option value="supplies">Supplies & Goods</option>
+        <option value="security">Security Services</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Describe What You Do</label>
+      <input id="capabilities" placeholder="e.g. We do school catering, event management, and office cleaning">
+      <div class="hint">One sentence. This helps AI match you to relevant tenders.</div>
+    </div>
+
+    <div class="form-group">
+      <label>Past Government Contracts?</label>
+      <div class="checkbox-group">
+        <div class="checkbox-item" onclick="toggleGovExp(this, 'yes')">
+          <input type="radio" name="govExp" value="yes">
+          <span>Yes</span>
+        </div>
+        <div class="checkbox-item" onclick="toggleGovExp(this, 'no')">
+          <input type="radio" name="govExp" value="no">
+          <span>No, first time</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="govExpDetails" style="display:none">
+      <div class="inline-row">
+        <div class="form-group">
+          <label>Number of Contracts</label>
+          <input id="govCount" placeholder="e.g. 5" type="number">
+        </div>
+        <div class="form-group">
+          <label>Total Value (RWF)</label>
+          <input id="govValue" placeholder="e.g. 50000000" type="number">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Key Certifications</label>
+      <div class="checkbox-group">
+        <div class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox"><span>Tax Clearance</span></div>
+        <div class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox"><span>RSSB</span></div>
+        <div class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox"><span>RDB</span></div>
+        <div class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox"><span>ISO</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: What You Want -->
+  <div class="step" id="step3">
+    <div class="step-title">What are you looking for?</div>
+    <div class="step-subtitle">Your preferences — we'll use these to filter and rank tenders.</div>
+
+    <div class="inline-row">
+      <div class="form-group">
+        <label>Min Value (RWF)</label>
+        <input id="minVal" placeholder="e.g. 5000000" type="number">
+      </div>
+      <div class="form-group">
+        <label>Max Value (RWF)</label>
+        <input id="maxVal" placeholder="e.g. 200000000" type="number">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Preferred Tender Methods</label>
+      <div class="checkbox-group">
+        <div class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="open"><span>Open</span></div>
+        <div class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="selective"><span>Selective</span></div>
+        <div class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="restricted"><span>Restricted</span></div>
+        <div class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="direct"><span>Direct</span></div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Regions You Can Work In</label>
+      <input id="regions" placeholder="e.g. Kigali, Gasabo, Eastern Province">
+      <div class="hint">District names, province names, or specific areas.</div>
+    </div>
+
+    <div class="form-group">
+      <label>Timeline</label>
+      <select id="timeline">
+        <option value="">Select</option>
+        <option value="immediate">I need work now</option>
+        <option value="quarter">This quarter</option>
+        <option value="planning">Planning ahead</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- STEP 4: Working Style (Psychographics) -->
+  <div class="step" id="step4">
+    <div class="step-title">Your working style</div>
+    <div class="step-subtitle">Help us tailor recommendations to how you work. No wrong answers.</div>
+
+    <div class="form-group">
+      <label>When choosing tenders, I prefer:</label>
+      <div class="psycho-options">
+        <div class="psycho-option" onclick="selectPsycho(this, 'risk', 'safe')">
+          <input type="radio" name="risk">
+          <span class="psycho-icon">🔵</span>
+          <div><div class="psycho-label">Safe bets</div><div class="psycho-desc">Fewer competitors, higher chance of winning</div></div>
+        </div>
+        <div class="psycho-option" onclick="selectPsycho(this, 'risk', 'balanced')">
+          <input type="radio" name="risk">
+          <span class="psycho-icon">🟡</span>
+          <div><div class="psycho-label">Balanced</div><div class="psycho-desc">Some competition is fine if the value is right</div></div>
+        </div>
+        <div class="psycho-option" onclick="selectPsycho(this, 'risk', 'stretch')">
+          <input type="radio" name="risk">
+          <span class="psycho-icon">🔴</span>
+          <div><div class="psycho-label">Stretch goals</div><div class="psycho-desc">I'll compete in crowded fields for bigger value</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>My main goal with government contracts is:</label>
+      <div class="psycho-options">
+        <div class="psycho-option" onclick="selectPsycho(this, 'growth', 'fast')">
+          <input type="radio" name="growth">
+          <span class="psycho-icon">📈</span>
+          <div><div class="psycho-label">Grow fast</div><div class="psycho-desc">Bigger contracts, even if they're harder</div></div>
+        </div>
+        <div class="psycho-option" onclick="selectPsycho(this, 'growth', 'steady')">
+          <input type="radio" name="growth">
+          <span class="psycho-icon">📊</span>
+          <div><div class="psycho-label">Steady income</div><div class="psycho-desc">Consistent work I can deliver reliably</div></div>
+        </div>
+        <div class="psycho-option" onclick="selectPsycho(this, 'growth', 'reputation')">
+          <input type="radio" name="growth">
+          <span class="psycho-icon">🛡️</span>
+          <div><div class="psycho-label">Build reputation</div><div class="psycho-desc">Start small, prove myself, grow later</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>I want this tool to:</label>
+      <div class="psycho-options">
+        <div class="psycho-option" onclick="selectPsycho(this, 'learning', 'expert')">
+          <input type="radio" name="learning">
+          <span class="psycho-icon">🎯</span>
+          <div><div class="psycho-label">Just show me the best</div><div class="psycho-desc">I know what I'm doing</div></div>
+        </div>
+        <div class="psycho-option" onclick="selectPsycho(this, 'learning', 'improve')">
+          <input type="radio" name="learning">
+          <span class="psycho-icon">📖</span>
+          <div><div class="psycho-label">Help me learn</div><div class="psycho-desc">I want to improve my bidding skills</div></div>
+        </div>
+        <div class="psycho-option" onclick="selectPsycho(this, 'learning', 'beginner')">
+          <input type="radio" name="learning">
+          <span class="psycho-icon">🤝</span>
+          <div><div class="psycho-label">Guide me step by step</div><div class="psycho-desc">I'm new to this and want support</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5: Constraints (Optional) -->
+  <div class="step" id="step5">
+    <div class="step-title">Your constraints (optional)</div>
+    <div class="step-subtitle">Help us filter out tenders you realistically can't handle.</div>
+
+    <div class="form-group">
+      <label>Max team size you can deploy</label>
+      <input id="maxTeam" placeholder="e.g. 15" type="number">
+    </div>
+
+    <div class="form-group">
+      <label>Equipment you own</label>
+      <input id="equipment" placeholder="e.g. 2 excavators, concrete mixer, scaffolding">
+    </div>
+
+    <div class="form-group">
+      <label>Cash flow limit</label>
+      <input id="cashFlow" placeholder="Max contract value you can finance (RWF)" type="number">
+      <div class="hint">Tenders above this may strain your resources.</div>
+    </div>
+
+    <div class="form-group">
+      <label>Preferences</label>
+      <div class="checkbox-group">
+        <div class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" id="prefSingleBid"><span>Prefer tenders where I'm likely the only bidder</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="status"></div>
+
+  <div class="nav-row">
+    <button class="btn btn-back" id="btnBack" onclick="prevStep()" style="display:none">Back</button>
+    <button class="btn btn-next" id="btnNext" onclick="nextStep()">Next</button>
+  </div>
+</div>
+
+<script>
+var USER_ID = '<?= uid ?>' || '';
+var DEPLOY_URL = '<?= ScriptApp.getService().getUrl() ?>';
+var currentStep = 1;
+var totalSteps = 5;
+var psychoData = { risk: '', growth: '', learning: '' };
+
+function toggleCheck(el) {
+  el.classList.toggle('selected');
+  var cb = el.querySelector('input[type="checkbox"]');
+  if (cb) cb.checked = !cb.checked;
+}
+
+function toggleGovExp(el, val) {
+  document.querySelectorAll('[name="govExp"]').forEach(function(r) {
+    r.parentElement.parentElement.classList.remove('selected');
+  });
+  el.classList.add('selected');
+  el.querySelector('input').checked = true;
+  document.getElementById('govExpDetails').style.display = val === 'yes' ? 'block' : 'none';
+}
+
+function selectPsycho(el, category, value) {
+  var parent = el.parentElement;
+  parent.querySelectorAll('.psycho-option').forEach(function(opt) {
+    opt.classList.remove('selected');
+    opt.querySelector('input').checked = false;
+  });
+  el.classList.add('selected');
+  el.querySelector('input').checked = true;
+  psychoData[category] = value;
+}
+
+function updateDots() {
+  for (var i = 1; i <= totalSteps; i++) {
+    var dot = document.getElementById('dot' + i);
+    dot.className = 'dot';
+    if (i < currentStep) dot.classList.add('done');
+    else if (i === currentStep) dot.classList.add('active');
+  }
+}
+
+function showStep(n) {
+  for (var i = 1; i <= totalSteps; i++) {
+    document.getElementById('step' + i).classList.remove('active');
+  }
+  document.getElementById('step' + n).classList.add('active');
+  currentStep = n;
+
+  document.getElementById('btnBack').style.display = n > 1 ? 'inline-block' : 'none';
+
+  if (n === totalSteps) {
+    document.getElementById('btnNext').textContent = 'Save & Find Opportunities';
+    document.getElementById('btnNext').className = 'btn btn-save';
+  } else {
+    document.getElementById('btnNext').textContent = 'Next';
+    document.getElementById('btnNext').className = 'btn btn-next';
+  }
+
+  updateDots();
+}
+
+function nextStep() {
+  if (currentStep === 1) {
+    if (!document.getElementById('companyName').value.trim()) {
+      showStatus('Company name is required.', true);
+      return;
+    }
+  }
+
+  if (currentStep === 2) {
+    if (!document.getElementById('sector').value) {
+      showStatus('Please select your primary sector.', true);
+      return;
+    }
+  }
+
+  if (currentStep < totalSteps) {
+    showStep(currentStep + 1);
+  } else {
+    saveDNA();
+  }
+}
+
+function prevStep() {
+  if (currentStep > 1) showStep(currentStep - 1);
+}
+
+function showStatus(msg, isError) {
+  var el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = isError ? 'error' : '';
+}
+
+function saveDNA() {
+  showStatus('Saving your Business DNA...', false);
+  document.getElementById('btnNext').disabled = true;
+
+  // Collect certifications
+  var certs = [];
+  document.querySelectorAll('#step2 .checkbox-item.selected span').forEach(function(s) {
+    certs.push(s.textContent);
+  });
+
+  // Collect methods
+  var methods = [];
+  document.querySelectorAll('#step3 .checkbox-item.selected input[type="checkbox"]').forEach(function(cb) {
+    if (cb.value) methods.push(cb.value);
+  });
+
+  var data = {
+    company_name: document.getElementById('companyName').value.trim(),
+    tin: document.getElementById('tin').value.trim(),
+    year_established: document.getElementById('yearEst').value.trim(),
+    company_size: document.getElementById('companySize').value,
+    is_women_led: document.getElementById('womenLed').checked ? 'yes' : '',
+    is_youth_led: document.getElementById('youthLed').checked ? 'yes' : '',
+    rdb_registered: document.getElementById('rdbReg').value,
+    primary_sector: document.getElementById('sector').value,
+    capabilities: document.getElementById('capabilities').value.trim(),
+    past_gov_contracts: document.querySelector('[name="govExp"]:checked') ? document.querySelector('[name="govExp"]:checked').value : '',
+    past_gov_count: document.getElementById('govCount').value || 0,
+    past_gov_total_value: document.getElementById('govValue').value || 0,
+    certifications: certs.join(', '),
+    min_value: document.getElementById('minVal').value || 0,
+    max_value: document.getElementById('maxVal').value || 0,
+    preferred_methods: methods.join(', '),
+    regions: document.getElementById('regions').value.trim(),
+    timeline_urgency: document.getElementById('timeline').value,
+    risk_appetite: psychoData.risk || 'balanced',
+    growth_orientation: psychoData.growth || 'steady',
+    decision_speed: 'careful',
+    learning_mindset: psychoData.learning || 'improve',
+    competitive_posture: 'comfortable',
+    price_sensitivity: 'competitive',
+    equipment: document.getElementById('equipment').value.trim(),
+    max_team_size: document.getElementById('maxTeam').value.trim(),
+    cash_flow_limit: document.getElementById('cashFlow').value.trim(),
+    pref_single_bid: document.getElementById('prefSingleBid').checked ? 'yes' : ''
+  };
+
+  document.getElementById('btnNext').disabled = true;
+
+  // Navigate top window to exact deployment URL — user gesture is active
+  var target = DEPLOY_URL + '?page=dashboard' + (USER_ID ? '&uid=' + encodeURIComponent(USER_ID) : '');
+  window.top.location.href = target;
+
+  // Fire save in background (hidden iframe POST survives navigation)
+  google.script.run.saveBusinessDNA(data, USER_ID);
+}
+
+
+
+// ── Navigation helper ──────────────────────────────────────────
+// In Google Apps Script web apps, relative ?page= URLs don't work
+// from inside the iframe. We resolve the full deployed URL first.
+var APP_URL = null;
+
+function navigate(page) {
+  var url = '?page=' + page + (USER_ID ? '&uid=' + encodeURIComponent(USER_ID) : '');
+  if (APP_URL) { window.location.href = APP_URL + url; return; }
+  google.script.run.withSuccessHandler(function(u) { APP_URL = u; window.location.href = u + url; }).withFailureHandler(function() { window.location.href = url; }).getAppUrl();
+}
+// ───────────────────────────────────────────────────────────────
+
+google.script.run.withSuccessHandler(function(url) { APP_URL = url; }).getAppUrl();
+
+function immediateNavigate(page) {
+  var url = '?page=' + page + (USER_ID ? '&uid=' + encodeURIComponent(USER_ID) : '');
+  if (APP_URL) { window.location.href = APP_URL + url; return; }
+  google.script.run.withSuccessHandler(function(u) { window.location.href = u + url; }).withFailureHandler(function() { window.location.href = url; }).getAppUrl();
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,469 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head><title>Umucyo Assistant - Procurement Intelligence</title>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; background: #F4F6F9; color: #1C2833; min-height: 100vh; }
+
+    /* ── Header ── */
+    .app-header { background: #fff; border-bottom: 1px solid #e8eaed; padding: 14px 18px 10px; display: flex; align-items: flex-start; justify-content: space-between; }
+    .app-brand { line-height: 1.2; }
+    .app-title { font-size: 22px; font-weight: 700; color: #1C2833; }
+    .app-title span { color: #2060C0; }
+    .app-tagline { font-size: 12px; color: #999; margin-top: 1px; }
+    .lang-switch { display: flex; gap: 3px; }
+    .lang-btn { padding: 5px 10px; border-radius: 6px; border: 1px solid #e0e0e0; background: #fff; font-size: 11px; font-weight: 600; color: #888; cursor: pointer; }
+    .lang-btn.active { background: #2060C0; color: #fff; border-color: #2060C0; }
+
+    /* ── Navigation bar ── */
+    .navbar { background: #fff; border-bottom: 1px solid #e8eaed; position: relative; top: 0; z-index: 99; padding: 0 12px; display: flex; align-items: center; justify-content: center; overflow: visible; -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 2px; }
+    .navbar::-webkit-scrollbar { display: none; }
+    .nav-group { position: relative; flex-shrink: 0; }
+    .nav-tab {
+      display: flex; align-items: center; gap: 5px; padding: 10px 12px;
+      font-size: 13px; font-weight: 500; color: #666; cursor: pointer;
+      border: none; background: transparent; white-space: nowrap;
+      border-bottom: 2px solid transparent; transition: all 0.15s;
+      font-family: inherit;
+    }
+    .nav-tab:hover { color: #333; background: #F0F4F8; border-radius: 8px 8px 0 0; }
+    .nav-tab.active { color: #2060C0; font-weight: 600; border-bottom-color: #2060C0; }
+    .nav-icon { font-size: 15px; line-height: 1; }
+
+    /* ── Dropdown ── */
+    .nav-dropdown {
+      display: none; position: absolute; top: 100%; left: 0;
+      background: #fff; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+      min-width: 200px; padding: 6px; z-index: 100;
+    }
+    .nav-dropdown.show { display: block; }
+    .dd-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 12px; border-radius: 8px; font-size: 12px;
+      color: #555; cursor: pointer; transition: background 0.1s;
+      white-space: nowrap;
+    }
+    .dd-item:hover { background: #E8F0FE; color: #2060C0; }
+    .dd-item .nav-icon { font-size: 13px; }
+
+    /* ── Main content ── */
+    .container { max-width: 960px; margin: 0 auto; padding: 18px 16px; }
+    @media(min-width:1200px){.container{max-width:1100px}}
+
+    /* ── Main card ── */
+    .main-card {
+      background: #fff; border-radius: 14px; border: 1px solid #e8eaed;
+      padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      margin-bottom: 14px;
+    }
+    .main-card .subtitle { font-size: 13px; color: #888; margin-bottom: 16px; }
+
+    /* ── Stats row ── */
+    .stat-row { display: flex; gap: 8px; margin-bottom: 4px; }
+    .stat-card { flex: 1; text-align: center; padding: 14px 8px; background: #F0F4F8; border-radius: 10px; cursor: pointer; transition: all .15s; border: 2px solid transparent; }
+    .stat-card:hover { border-color: #2060C0; background: #E8F0FE; }
+    .stat-card.active { border-color: #2060C0; background: #E8F0FE; }
+    .stat-num { font-size: 24px; font-weight: 700; color: #1C2833; line-height: 1.1; }
+    .stat-label { font-size: 10px; color: #888; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.3px; }
+
+    /* ── Expand panel ── */
+    .expand-panel { display: none; background: #fff; border-radius: 14px; border: 1px solid #e8eaed; padding: 16px; margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+    .expand-panel.show { display: block; }
+    .expand-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .expand-title { font-size: 13px; font-weight: 600; color: #1C2833; }
+    .expand-close { font-size: 16px; color: #aaa; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
+    .expand-close:hover { background: #f0f0f0; color: #c0392b; }
+    .expand-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f4f4f4; cursor: pointer; transition: background .1s; }
+    .expand-item:hover { background: #F4F6F9; margin: 0 -12px; padding: 10px 12px; border-radius: 6px; }
+    .expand-item:last-child { border-bottom: none; }
+    .expand-item .ei-title { font-size: 12px; font-weight: 600; color: #1C2833; line-height: 1.3; }
+    .expand-item .ei-meta { font-size: 11px; color: #888; margin-top: 2px; }
+    .expand-item .ei-badge { display: inline-block; padding: 1px 6px; border-radius: 6px; font-size: 9px; font-weight: 600; margin-left: 6px; vertical-align: middle; }
+    .expand-footer { text-align: center; margin-top: 10px; }
+    .expand-footer a { font-size: 12px; color: #2060C0; font-weight: 600; text-decoration: none; }
+    .expand-spinner { text-align: center; padding: 20px; color: #999; font-size: 12px; }
+
+    /* ── Action grid ── */
+    .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px; }
+    .action-card {
+      background: #F0F4F8; border-radius: 10px; padding: 12px;
+      cursor: pointer; border: 1px solid transparent; transition: all 0.15s;
+    }
+    .action-card:hover { border-color: #2060C0; background: #E8F0FE; }
+    .action-icon { font-size: 18px; margin-bottom: 4px; }
+    .action-title { font-size: 12px; font-weight: 600; color: #1C2833; margin-bottom: 2px; }
+    .action-desc { font-size: 10px; color: #888; line-height: 1.3; }
+
+    /* ── Activity ── */
+    .activity-item { display: flex; gap: 8px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid #f4f4f4; font-size: 12px; color: #555; }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-dot { width: 6px; height: 6px; border-radius: 50%; background: #2060C0; flex-shrink: 0; margin-top: 5px; }
+    .activity-text { flex: 1; }
+    .activity-time { font-size: 10px; color: #aaa; margin-top: 2px; }
+
+    /* ── Upgrade banner ── */
+    .upgrade-banner { background: linear-gradient(135deg, #2060C0, #F4A940); color: #fff; border-radius: 14px; padding: 16px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; }
+    .upgrade-banner h3 { font-size: 14px; font-weight: 600; }
+    .upgrade-banner p { font-size: 11px; opacity: 0.85; margin-top: 2px; }
+    .btn-upgrade { background: #fff; color: #2060C0; padding: 8px 18px; border-radius: 20px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; flex-shrink: 0; }
+
+    .btn { padding: 10px 20px; border-radius: 10px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+    .btn-primary { background: #2060C0; color: #fff; }
+
+    .empty-state { text-align: center; padding: 30px 16px; color: #888; font-size: 13px; }
+    .spinner { text-align: center; padding: 30px; color: #999; font-size: 13px; }
+
+    /* ── Tier badge ── */
+    .tier-badge { display: inline-block; padding: 4px 10px; border-radius: 10px; font-size: 10px; font-weight: 600; margin-left: 8px; }
+
+    /* ── Pipeline warning ── */
+    .pipeline-warn { background: #fff3cd; border: 1px solid #ffc107; border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; }
+    .pipeline-warn h4 { font-size: 12px; font-weight: 700; color: #856404; margin-bottom: 6px; }
+    .pipeline-warn ul { margin: 0; padding: 0 0 0 18px; font-size: 11px; color: #856404; }
+    .pipeline-warn li { margin-bottom: 3px; }
+
+    /* ── Tooltip ── */
+    .help-tip { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; border-radius: 50%; background: #d0d5dd; color: #fff; font-size: 9px; font-weight: 700; cursor: help; position: relative; margin-left: 4px; vertical-align: middle; }
+    .help-tip:hover { background: #2060C0; }
+    .help-tip::after { content: attr(data-tip); position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%); background: #1C2833; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: 400; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.15s; z-index: 200; }
+    .help-tip:hover::after { opacity: 1; }
+
+    /* ── Onboarding card ── */
+    .onboard-card { background: linear-gradient(135deg,#E8F0FE,#FFF8E1); border: 1px solid #2060C0; border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+    .onboard-card h3 { font-size: 14px; font-weight: 700; color: #2060C0; margin-bottom: 12px; }
+    .onboard-step { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 12px; color: #555; }
+    .onboard-step.done { color: #1B7A3D; }
+    .onboard-step .step-icon { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+    .step-todo { background: #e0e0e0; color: #888; }
+    .step-done { background: #1B7A3D; color: #fff; }
+  </style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="app-brand">
+    <div class="app-title">Umucyo<span>Assistant</span></div>
+    <div class="app-tagline">Your AI-powered procurement partner</div>
+  </div>
+  <div class="lang-switch">
+    <button class="lang-btn active" onclick="setLang('EN')">EN</button>
+    <button class="lang-btn" onclick="setLang('FR')">FR</button>
+    <button class="lang-btn" onclick="setLang('KIN')">KIN</button>
+  </div>
+</div>
+
+<div class="navbar" id="navbar">
+  <div class="nav-group">
+    <button class="nav-tab active" onclick="navigate('dashboard')"><span class="nav-icon">🏠</span>Home</button>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab" onclick="toggleDD('dd-opp')"><span class="nav-icon">📋</span>Opportunities ▾</button>
+    <div class="nav-dropdown" id="dd-opp">
+      <div class="dd-item" onclick="navigate('find')"><span class="nav-icon">🔍</span>Find Matches</div>
+      <div class="dd-item" onclick="navigate('check')"><span class="nav-icon">📋</span>Check Tender</div>
+    </div>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab" onclick="toggleDD('dd-market')"><span class="nav-icon">📊</span>Market Intel ▾</button>
+    <div class="nav-dropdown" id="dd-market">
+      <div class="dd-item" onclick="navigate('market')"><span class="nav-icon">📊</span>Market Dashboard</div>
+      <div class="dd-item" onclick="navigate('calendar')"><span class="nav-icon">📅</span>Procurement Calendar</div>
+      <div class="dd-item" onclick="navigate('ratings')"><span class="nav-icon">📊</span>Procurement Instability</div>
+      <div class="dd-item" onclick="navigate('sector')"><span class="nav-icon">🏗️</span>Sector Reports</div>
+      <div class="dd-item" onclick="navigate('competitor')"><span class="nav-icon">🔍</span>Competitors</div>
+    </div>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab" onclick="toggleDD('dd-tools')"><span class="nav-icon">🧰</span>My Tools ▾</button>
+    <div class="nav-dropdown" id="dd-tools">
+      <div class="dd-item" onclick="navigate('dna')"><span class="nav-icon">🧬</span>My Business DNA</div>
+      <div class="dd-item" onclick="navigate('portfolio')"><span class="nav-icon">🏆</span>My Portfolio</div>
+      <div class="dd-item" onclick="navigate('insights')"><span class="nav-icon">💡</span>My Insights</div>
+      <div class="dd-item" onclick="navigate('compliance')"><span class="nav-icon">📝</span>Review Proposal</div>
+      <div class="dd-item" onclick="navigate('jv')"><span class="nav-icon">🤝</span>JV Partners</div>
+    </div>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab" onclick="toggleDD('dd-learn')"><span class="nav-icon">📖</span>Learn & Upgrade ▾</button>
+    <div class="nav-dropdown" id="dd-learn">
+      <div class="dd-item" onclick="navigate('learn')"><span class="nav-icon">📖</span>Learn & Practice</div>
+      <div class="dd-item" onclick="navigate('upgrade')"><span class="nav-icon">⭐</span>Upgrade Plan</div>
+      <div class="dd-item" onclick="navigate('guide')"><span class="nav-icon">📖</span>User Guide</div>
+      <div class="dd-item admin-link" onclick="navigate('admin')" style="display:none"><span class="nav-icon">⚙️</span>Admin</div>
+    </div>
+  </div>
+</div>
+
+<div class="container" id="content">
+  <div class="spinner">Loading...</div>
+</div>
+
+<script>
+var USER_ID = '<?= uid ?>' || '';
+(function() { var saved = localStorage.getItem('umucyo_uid'); if (saved && saved !== USER_ID && window.location.search.indexOf('uid=') === -1 && (!USER_ID || USER_ID === 'test_user')) { window.location.href = '?page=dashboard&uid=' + encodeURIComponent(saved); } })();
+var APP_URL = '';
+var DEPLOY_URL = '<?= ScriptApp.getService().getUrl() ?>';
+window.setLang = function(l) { document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.toggle('active', b.textContent === l); }); };
+window.toggleDD = function(id) { var target = document.getElementById(id); document.querySelectorAll('.nav-dropdown').forEach(function(d) { if (d !== target) d.classList.remove('show'); }); target.classList.toggle('show'); };
+document.addEventListener('click', function(e) { if (!e.target.closest('.nav-group')) { document.querySelectorAll('.nav-dropdown').forEach(function(d) { d.classList.remove('show'); }); } });
+
+function loadDash() {
+  google.script.run
+    .withSuccessHandler(render)
+    .withFailureHandler(function(e) { document.getElementById('content').innerHTML = '<div class="main-card"><div class="empty-state"><p>⚠️ '+esc(e.message)+'</p></div></div>'; })
+    .getDashboardData(USER_ID);
+}
+
+function render(d) {
+  if (!d) { document.getElementById('content').innerHTML = '<div class="empty-state"><p>No data returned. Try refreshing.</p></div>'; return; }
+  if (d.needsDNA) {
+    var savedEmail = localStorage.getItem('umucyo_uid') || '';
+    var isAnonymous = !USER_ID || USER_ID === 'test_user';
+    if (USER_ID && !isAnonymous) {
+      document.getElementById('content').innerHTML = 
+        '<div class="main-card" style="text-align:center">' +
+        '<h3 style="font-size:16px;margin-bottom:8px">Welcome' + (savedEmail ? ', ' + esc(savedEmail) : '') + '</h3>' +
+        '<p style="font-size:13px;color:#888;margin-bottom:16px">Set up your Business DNA to get AI-matched tenders, win predictions, and competitor analysis.</p>' +
+        '<button class="btn btn-primary" onclick="navigate(\'dna\')">Set Up My Business DNA</button>' +
+        '</div>';
+    } else {
+      document.getElementById('content').innerHTML = 
+        '<div class="main-card" style="text-align:center">' +
+        '<h3 style="font-size:16px;margin-bottom:8px">Welcome to Umucyo Assistant</h3>' +
+        '<p style="font-size:13px;color:#888;margin-bottom:16px">Enter your email to get started with AI-matched procurement tenders.</p>' +
+        '<input class="search-input" id="emailInput" placeholder="you@example.com" value="' + esc(savedEmail) + '" style="margin-bottom:10px">' +
+        '<button class="btn btn-primary" onclick="doLogin()">Continue</button>' +
+        '<p style="font-size:10px;color:#aaa;margin-top:8px">Your email is your account ID. No password needed.</p>' +
+        '</div>';
+    }
+    return;
+  }
+  var h = '';
+  if (d.tier === 'free' && d.status !== 'trial') {
+    h += '<div class="upgrade-banner"><div><h3>Upgrade to Pro</h3><p>Get win predictions, competitor names & contacts — from $20/mo</p></div><button class="btn-upgrade" onclick="navigate(\'upgrade\')">Upgrade</button></div>';
+  }
+  if (d.status === 'trial') {
+    h += '<div class="upgrade-banner" style="background:linear-gradient(135deg,#1B7A3D,#165A2E)"><div><h3>🔬 14-Day Pro Trial Active</h3><p>Win predictions, competitor names & contacts are unlocked. Expires ' + (d.expires_at ? new Date(d.expires_at).toLocaleDateString() : 'soon') + '</p></div><button class="btn-upgrade" style="background:#fff;color:#1B7A3D" onclick="navigate(\'upgrade\')">Upgrade Now</button></div>';
+  }
+
+  h += '<div id="pipelineWarn"></div>';
+
+  var onboardingSteps = 0, onboardingDone = 0;
+  var hasProfile = !!d.companyName;
+  var hasMatches = (d.matchCount || 0) > 0;
+  var hasSaved = (d.savedCount || 0) > 0;
+
+  if (!hasProfile || !hasMatches || !hasSaved) {
+    h += '<div class="onboard-card"><h3>🚀 Getting Started</h3>';
+    h += '<div class="onboard-step' + (hasProfile?' done':'') + '"><span class="step-icon ' + (hasProfile?'step-done':'step-todo') + '">' + (hasProfile?'✓':'1') + '</span>Complete your <a href="#" onclick="navigate(\'dna\');return false" style="color:#2060C0;font-weight:600">Business DNA</a> — tell us about your company</div>';
+    h += '<div class="onboard-step' + (hasMatches?' done':'') + '"><span class="step-icon ' + (hasMatches?'step-done':'step-todo') + '">' + (hasMatches?'✓':'2') + '</span><a href="#" onclick="navigate(\'find\');return false" style="color:#2060C0;font-weight:600">Generate your matches</a> — find tenders that fit your profile</div>';
+    h += '<div class="onboard-step' + (hasSaved?' done':'') + '"><span class="step-icon ' + (hasSaved?'step-done':'step-todo') + '">' + (hasSaved?'✓':'3') + '</span><a href="#" onclick="navigate(\'find\');return false" style="color:#2060C0;font-weight:600">Save tenders</a> — bookmark opportunities you\'re interested in</div>';
+    h += '<div class="onboard-step"><span class="step-icon step-todo">4</span>Check <span class="help-tip" data-tip="Premium feature: win probability, buyer integrity, bid recommendations">?</span> <a href="#" onclick="navigate(\'check\');return false" style="color:#2060C0;font-weight:600">Risk Analysis</a> before bidding</div>';
+    h += '</div>';
+  }
+
+  var tierBadge = '';
+  if (d.tier === 'pro') tierBadge = '<span class="tier-badge" style="background:#2060C0;color:#fff">PRO</span>';
+  else if (d.tier === 'premium') tierBadge = '<span class="tier-badge" style="background:#F4A940;color:#1C2833">PREMIUM</span>';
+  else if (!d.tier || d.tier === 'free') tierBadge = '<span class="tier-badge" style="background:#888;color:#fff">FREE</span>';
+  if (d.status === 'trial') tierBadge = '<span class="tier-badge" style="background:#1B7A3D;color:#fff">TRIAL</span>';
+
+  h += '<div class="main-card">';
+  h += '<div class="subtitle">Welcome back' + (d.companyName ? ', ' + esc(d.companyName) : '') + tierBadge + '. Here is your procurement overview. <a href="#" onclick="navigate(\'dashboard\');return false" style="font-size:10px;color:#2060C0;float:right">↻ Refresh</a></div>';
+  h += '<div class="stat-row">';
+  h += '<div class="stat-card" id="stat-all" onclick="expandCard(\'all\')" title="Browse all available tenders"><div class="stat-num">' + fmtNum(d.activeTenders || 0) + '</div><div class="stat-label">Tenders <span class="help-tip" data-tip="Total tenders including RPPA and JobInRwanda"></span></div></div>';
+  h += '<div class="stat-card" id="stat-new" onclick="expandCard(\'new\')" title="Tenders published in the last 7 days"><div class="stat-num">' + fmtNum(d.newThisWeek || 0) + '</div><div class="stat-label">New This Week <span class="help-tip" data-tip="Tenders published in the last 7 days"></span></div></div>';
+  h += '<div class="stat-card" id="stat-dna" onclick="expandCard(\'dna\')" title="Your AI-matched tenders"><div class="stat-num">' + (d.matchCount || 0) + '</div><div class="stat-label">Matches <span class="help-tip" data-tip="Tenders that match your Business DNA profile"></span></div></div>';
+  h += '<div class="stat-card" id="stat-saved" onclick="expandCard(\'saved\')" title="Your bookmarked tenders"><div class="stat-num">' + (d.savedCount || 0) + '</div><div class="stat-label">Saved <span class="help-tip" data-tip="Tenders you have bookmarked for later"></span></div></div>';
+  h += '</div>';
+  h += '<div class="expand-panel" id="expandPanel"><div id="expandContent"></div></div>';
+  h += '</div>';
+
+  // Pre-Qualification Score
+  var ss = d.supplierScore;
+  if (ss && ss.score > 0) {
+    var sc = ss.score >= 70 ? '#1B7A3D' : ss.score >= 40 ? '#E8913A' : '#c0392b';
+    var sl = ss.score >= 70 ? 'Strong' : ss.score >= 40 ? 'Moderate' : 'Developing';
+    h += '<div class="main-card">';
+    h += '<div class="subtitle" style="margin-bottom:8px">Pre-Qualification Score</div>';
+    h += '<div style="display:flex;align-items:center;gap:16px">';
+    h += '<div style="width:64px;height:64px;border-radius:50%;border:3px solid ' + sc + ';display:flex;align-items:center;justify-content:center;flex-shrink:0">';
+    h += '<span style="font-size:20px;font-weight:800;color:' + sc + '">' + ss.score + '</span>';
+    h += '</div>';
+    h += '<div style="flex:1">';
+    h += '<div style="display:inline-block;padding:3px 10px;border-radius:10px;font-size:10px;font-weight:600;background:' + sc + '18;color:' + sc + ';margin-bottom:6px">' + sl + '</div>';
+    if (ss.breakdown) {
+      for (var bk in ss.breakdown) {
+        var bv = ss.breakdown[bk];
+        var bpc = Math.min(100, (bv / 40) * 100);
+        var bc = bv >= 15 ? '#1B7A3D' : bv >= 8 ? '#E8913A' : '#c0392b';
+        h += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">';
+        h += '<span style="font-size:10px;color:#888;width:110px;text-transform:capitalize">' + bk.replace(/_/g, ' ') + '</span>';
+        h += '<div style="flex:1;height:5px;background:#e8eaed;border-radius:3px;overflow:hidden"><div style="height:100%;width:' + bpc + '%;background:' + bc + ';border-radius:3px"></div></div>';
+        h += '<span style="font-size:10px;font-weight:600;color:' + bc + ';width:20px;text-align:right">' + bv + '</span>';
+        h += '</div>';
+      }
+    }
+    if (ss.recommendations && ss.recommendations.length > 0) {
+      h += '<div style="margin-top:8px;padding:8px 10px;background:#E8F0FE;border-radius:8px;font-size:10px;color:#555;line-height:1.5">';
+      ss.recommendations.slice(0, 2).forEach(function(r) { h += '→ ' + esc(r) + '<br>'; });
+      h += '</div>';
+    }
+    h += '</div></div></div>';
+  }
+
+  h += '<div class="main-card">';
+  h += '<div class="subtitle">What would you like to do?</div>';
+  h += '<div class="action-grid">';
+  h += '<div class="action-card" onclick="navigate(\'find\')"><div class="action-icon">🔍</div><div class="action-title">Find Matches</div><div class="action-desc">AI-matched tenders for your profile</div></div>';
+  h += '<div class="action-card" onclick="navigate(\'check\')"><div class="action-icon">📋</div><div class="action-title">Check Tender</div><div class="action-desc">Look up any tender by OCID</div></div>';
+  h += '<div class="action-card" onclick="navigate(\'market\')"><div class="action-icon">📊</div><div class="action-title">Market Dashboard</div><div class="action-desc">Trends & competition data</div></div>';
+  h += '<div class="action-card" onclick="navigate(\'portfolio\')"><div class="action-icon">🏆</div><div class="action-title">My Portfolio</div><div class="action-desc">Your track record</div></div>';
+  h += '<div class="action-card" onclick="navigate(\'calendar\')"><div class="action-icon">📅</div><div class="action-title">Calendar</div><div class="action-desc">When buyers publish</div></div>';
+  h += '<div class="action-card" onclick="navigate(\'insights\')"><div class="action-icon">💡</div><div class="action-title">My Insights</div><div class="action-desc">Personal stats & AI tips</div></div>';
+  h += '</div></div>';
+
+  h += '<div class="main-card">';
+  h += '<div class="subtitle" style="margin-bottom:8px">Recent Activity</div>';
+  if (d.recentActivity && d.recentActivity.length) {
+    d.recentActivity.forEach(function(a) { h += '<div class="activity-item"><div class="activity-dot"></div><div class="activity-text">' + esc(actionLabel(a.action)) + '<div class="activity-time">' + fmtDate(a.timestamp) + '</div></div></div>'; });
+  } else {
+    h += '<div class="empty-state"><p>No activity yet. Sync tenders and generate matches to get started.</p></div>';
+  }
+  h += '</div>';
+
+  if (d.savedTenders && d.savedTenders.length) {
+    h += '<div class="main-card">';
+    h += '<div class="subtitle" style="margin-bottom:8px">📌 Saved Tenders</div>';
+    d.savedTenders.forEach(function(st) { h += '<div class="activity-item"><div class="activity-dot" style="background:#1B7A3D"></div><div class="activity-text">' + esc(st.title) + '<div class="activity-time">' + esc(st.ocid) + '</div></div></div>'; });
+    h += '</div>';
+  }
+
+  document.getElementById('content').innerHTML = h;
+  if (d.appUrl) APP_URL = d.appUrl;
+  if (d.pipelineWarnings && d.pipelineWarnings.length) {
+    var pwHtml = '';
+    d.pipelineWarnings.forEach(function(w) {
+      pwHtml += '<div class="pipeline-warn"><h4>⚠️ Pipeline Overload — ' + w.count + ' tenders due the week of ' + w.weekOf + '</h4><ul>';
+      w.tenders.forEach(function(t) { pwHtml += '<li>' + esc(t.title) + ' — deadline: ' + new Date(t.deadline).toLocaleDateString() + '</li>'; });
+      pwHtml += '</ul><p style="font-size:10px;color:#856404;margin-top:6px">Consider prioritizing or delegating to avoid capacity risk.</p></div>';
+    });
+    document.getElementById('pipelineWarn').innerHTML = pwHtml;
+  }
+}
+
+function actionLabel(a) {
+  var m = { saved: 'Saved a tender', search: 'Searched tenders', lookup: 'Checked a tender', compliance_check: 'Checked compliance', ask_tender: 'Asked AI', ask_tutor: 'Asked the tutor', dna_saved: 'Updated My Business DNA', subscription_upgrade: 'Upgraded plan', bank_transfer_submitted: 'Sent bank transfer', alert_sent: 'Match alert sent', trial_started: 'Free trial started' };
+  return m[a] || 'Activity';
+}
+
+function fmtDate(d) { if (!d) return ''; return new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
+function fmtNum(n) { var v = parseInt(n) || 0; if (v >= 1e6) return (v / 1e6).toFixed(1) + 'M'; if (v >= 1e3) return (v / 1e3).toFixed(1) + 'K'; return v.toString(); }
+function esc(s) { if (!s) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function escJs(s) { if (!s) return ''; return String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"'); }
+function fmtVal(v) { if (!v) return '0'; var n = Number(v); if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B'; if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M'; return n.toLocaleString(); }
+
+function navigate(p) {
+  var parts = p.split('&'); var page = parts[0]; var params = parts.slice(1).join('&');
+  var url = '?page=' + page + (USER_ID ? '&uid=' + encodeURIComponent(USER_ID) : '') + (params ? '&' + params : '');
+  if (DEPLOY_URL) { window.top.location.href = DEPLOY_URL + url; return; }
+  if (APP_URL) { window.top.location.href = APP_URL + url; return; }
+  google.script.run.withSuccessHandler(function(u) {
+    APP_URL = u;
+    window.top.location.href = u + url;
+  }).withFailureHandler(function() { window.top.location.href = url; }).getAppUrl();
+}
+
+function doLogin() {
+  var email = (document.getElementById('emailInput') ? document.getElementById('emailInput').value.trim() : '') || USER_ID;
+  if (!email) return;
+  localStorage.setItem('umucyo_uid', email);
+  if (DEPLOY_URL) { window.top.location.href = DEPLOY_URL + '?page=dashboard&uid=' + encodeURIComponent(email); return; }
+  if (APP_URL) { window.top.location.href = APP_URL + '?page=dashboard&uid=' + encodeURIComponent(email); return; }
+  google.script.run.withSuccessHandler(function(u) {
+    window.top.location.href = u + '?page=dashboard&uid=' + encodeURIComponent(email);
+  }).getAppUrl();
+}
+
+loadDash();
+setTimeout(function() { checkStripeReturn(); }, 300);
+var activeFilter = '';
+
+function expandCard(filter) {
+  var panel = document.getElementById('expandPanel');
+  var content = document.getElementById('expandContent');
+  document.querySelectorAll('.stat-card').forEach(function(c){ c.classList.remove('active'); });
+  document.getElementById('stat-' + filter).classList.add('active');
+
+  if (activeFilter === filter && panel.classList.contains('show')) {
+    panel.classList.remove('show'); activeFilter = ''; return;
+  }
+  activeFilter = filter;
+  panel.classList.add('show');
+
+  var labels = { all: 'All Tenders', new: 'New This Week', dna: 'Your Matches', saved: 'Saved Tenders' };
+  content.innerHTML = '<div class="expand-header"><span class="expand-title">' + labels[filter] + '</span><span class="expand-close" onclick="document.getElementById(\'expandPanel\').classList.remove(\'show\');activeFilter=\'\'">✕</span></div><div class="expand-spinner">Loading...</div>';
+
+  var call;
+  if (filter === 'all') call = google.script.run.withSuccessHandler(function(r){ renderExpanded(filter, r); }).searchTenders('', {}, USER_ID);
+  if (filter === 'new') call = google.script.run.withSuccessHandler(function(r){ renderExpanded(filter, r); }).getNewThisWeekForWeb(USER_ID);
+  if (filter === 'dna') call = google.script.run.withSuccessHandler(function(r){ renderExpanded(filter, r); }).getMatchesForWeb(USER_ID);
+  if (filter === 'saved') call = google.script.run.withSuccessHandler(function(r){ renderExpanded(filter, r); }).getSavedTendersForWeb(USER_ID);
+}
+
+function renderExpanded(filter, data) {
+  var content = document.getElementById('expandContent');
+  if (!data || !data.length) { content.innerHTML = '<div class="expand-header"><span class="expand-title">No results</span><span class="expand-close" onclick="document.getElementById(\'expandPanel\').classList.remove(\'show\');activeFilter=\'\'">✕</span></div><div class="expand-spinner">Nothing to show for this filter.</div>'; return; }
+  var labels = { all: 'All Tenders', new: 'New This Week', dna: 'Your Matches', saved: 'Saved Tenders' };
+  var h = '<div class="expand-header"><span class="expand-title">' + labels[filter] + ' (' + data.length + ')</span><span class="expand-close" onclick="document.getElementById(\'expandPanel\').classList.remove(\'show\');activeFilter=\'\'">✕</span></div>';
+  var now = new Date();
+  data.slice(0, 20).forEach(function(t) {
+    var dl = t.deadline ? new Date(t.deadline) : null;
+    var days = dl ? Math.ceil((dl - now) / 86400000) : null;
+    var badge = '', badgeClass = '';
+    if (days !== null) {
+      if (days < 0) { badge = 'Closed'; badgeClass = 'background:#f8d7da;color:#721c24'; }
+      else if (days <= 7) { badge = 'Closing soon'; badgeClass = 'background:#fff3cd;color:#856404'; }
+      else { badge = 'Open'; badgeClass = 'background:#d4edda;color:#155724'; }
+    }
+    var val = (t.est_value || 0) > 0 ? fmtVal(t.est_value) + ' RWF' : '';
+    var score = t.relevance || t.match_score || '';
+    var baseUrl = DEPLOY_URL || APP_URL || '';
+    var url = baseUrl + '?page=check&uid=' + encodeURIComponent(USER_ID) + '&lookup=' + encodeURIComponent(t.title || t.ocid);
+    var ocidSafe = 's_' + String(t.ocid || t.title || '').replace(/[^a-zA-Z0-9]/g,'_');
+    var isSaved = filter === 'saved';
+    h += '<div class="expand-item">' +
+      '<div style="flex:1;min-width:0;cursor:pointer" onclick="window.top.location.href=\'' + escJs(url) + '\'">' +
+      '<div class="ei-title">' + esc(t.title) + (score ? '<span class="ei-badge" style="background:#E8F0FE;color:#2060C0">M:' + score + '</span>' : '') + '</div>' +
+      '<div class="ei-meta">' + esc(t.entity || '') + (val ? ' · ' + val : '') + (badge ? ' · <span class="ei-badge" style="' + badgeClass + '">' + badge + '</span>' : '') + '</div>' +
+      '</div>' +
+      '<button class="ei-save" onclick="event.stopPropagation();toggleExpandSave(\'' + escJs(t.ocid || t.title || '') + '\',this)" style="flex-shrink:0;padding:4px 10px;border-radius:6px;border:1px solid #e0e0e0;background:#fff;font-size:11px;cursor:pointer;color:' + (isSaved ? '#2060C0' : '#888') + '">' + (isSaved ? 'Saved' : 'Save') + '</button>' +
+      '</div>';
+  });
+  h += '<div class="expand-footer"><a href="#" onclick="navigate(\'find\');return false">View all in Find Matches →</a></div>';
+  content.innerHTML = h;
+}
+function toggleExpandSave(ocid, btn) {
+  google.script.run.withSuccessHandler(function(s) { btn.textContent = s === 'saved' ? 'Saved' : 'Save'; btn.style.color = s === 'saved' ? '#2060C0' : '#888'; }).withFailureHandler(function(e) {}).toggleSave(ocid, USER_ID);
+}
+function checkStripeReturn() {
+  var m = location.search.match(/[?&]session_id=([^&]+)/);
+  if (!m) return;
+  document.getElementById('content').innerHTML = '<div class="spinner">Confirming payment...</div>';
+  google.script.run.withSuccessHandler(function(r) {
+    if (r.success) { alert(r.message || 'Payment confirmed!'); window.location.reload(); }
+    else { document.getElementById('content').innerHTML = '<div class="main-card" style="text-align:center"><p style="color:#c0392b">' + esc(r.error || 'Verification failed') + '</p><button class="btn btn-primary" onclick="retryVerify()" style="margin-top:12px">Retry Verification</button><br><a href="?page=upgrade" onclick="navigate(\'upgrade\');return false" style="font-size:12px;color:#2060C0;margin-top:8px;display:inline-block">Return to Upgrade</a></div>'; }
+  }).withFailureHandler(function(e) { document.getElementById('content').innerHTML = '<div class="main-card" style="text-align:center"><p style="color:#c0392b">Verification failed.</p><p style="font-size:11px;color:#999">' + esc(e.message || 'Unknown error') + '</p><button class="btn btn-primary" onclick="retryVerify()" style="margin-top:12px">Retry Verification</button><br><a href="?page=upgrade" onclick="navigate(\'upgrade\');return false" style="font-size:12px;color:#2060C0;margin-top:8px;display:inline-block">Return to Upgrade</a></div>'; }).verifyStripeSession(decodeURIComponent(m[1]));
+function retryVerify() { var m = location.search.match(/[?&]session_id=([^&]+)/); if (!m) { alert('No pending payment found.'); return; } document.getElementById('content').innerHTML = '<div class="spinner">Retrying verification...</div>'; google.script.run.withSuccessHandler(function(r) { if (r.success) { alert(r.message); window.location.reload(); } else alert(r.error); }).retryStripeVerification(decodeURIComponent(m[1])); }
+}
+google.script.run.withSuccessHandler(function(isAdmin){if(isAdmin)document.querySelectorAll('.admin-link').forEach(function(e){e.style.display='flex';});}).isAdmin(USER_ID);
+</script>
+<footer style="text-align:center;padding:16px 12px 24px;font-size:10px;color:#aaa;line-height:1.8">
+<p>🤖 AI-generated\ insights\ may\ contain\ inaccuracies\.\ Always\ verify\ with\ official\ <a\ href="https://umucyo\.gov\.rw"\ target="_blank">Umucyo</a>\ sources\.\ ·\ Report\ procurement\ corruption:\ <a\ href="https://www\.transparency\.org/en/report-corruption/rwanda"\ target="_blank"\ style="font-weight:600">TI-Rwanda\ ALAC</a>\ ·\ \+250\ 788\ 309\ 563 <a href="https://umucyo.gov.rw" target="_blank" style="color:#2060C0">Umucyo</a> sources.</p>
+<p><a href="?page=terms" onclick="navigate('terms');return false" style="color:#2060C0">Terms</a> · <a href="?page=privacy" onclick="navigate('privacy');return false" style="color:#2060C0">Privacy</a></p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,238 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head><title>Umucyo Assistant - Procurement Intelligence</title>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; background: #F4F6F9; color: #1C2833; min-height: 100vh; }
+    .app-header { background: #fff; border-bottom: 1px solid #e8eaed; padding: 14px 18px 10px; display: flex; align-items: flex-start; justify-content: space-between; }
+    .app-title { font-size: 22px; font-weight: 700; color: #1C2833; } .app-title span { color: #2060C0; }
+    .app-tagline { font-size: 12px; color: #999; margin-top: 1px; }
+    .lang-switch { display: flex; gap: 3px; }
+    .lang-btn { padding: 5px 10px; border-radius: 6px; border: 1px solid #e0e0e0; background: #fff; font-size: 11px; font-weight: 600; color: #888; cursor: pointer; }
+    .lang-btn.active { background: #2060C0; color: #fff; border-color: #2060C0; }
+    .navbar { background: #fff; border-bottom: 1px solid #e8eaed; position: relative; top: 0; z-index: 99; padding: 0 12px; display: flex; align-items: center; justify-content: center; overflow: visible; -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 2px; }
+    .navbar::-webkit-scrollbar { display: none; }
+    .nav-group { position: relative; flex-shrink: 0; }
+    .nav-tab { display: flex; align-items: center; gap: 5px; padding: 10px 12px; font-size: 13px; font-weight: 500; color: #666; cursor: pointer; border: none; background: transparent; white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.15s; font-family: inherit; }
+    .nav-tab:hover { color: #333; background: #F0F4F8; border-radius: 8px 8px 0 0; }
+    .nav-tab.active { color: #2060C0; font-weight: 600; border-bottom-color: #2060C0; }
+    .nav-icon { font-size: 15px; line-height: 1; }
+    .nav-dropdown { display: none; position: absolute; top: 100%; left: 0; background: #fff; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.12); min-width: 200px; padding: 6px; z-index: 100; }
+    .nav-dropdown.show { display: block; }
+    .dd-item { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 8px; font-size: 12px; color: #555; cursor: pointer; transition: background 0.1s; white-space: nowrap; }
+    .dd-item:hover { background: #E8F0FE; color: #2060C0; }
+    .container { max-width: 960px; margin: 0 auto; padding: 18px 16px; }
+    @media(min-width:1200px){.container{max-width:1100px}}
+    .main-card { background: #fff; border-radius: 14px; border: 1px solid #e8eaed; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); margin-bottom: 14px; }
+    .main-card .subtitle { font-size: 13px; color: #888; margin-bottom: 16px; }
+    .search-input { width: 100%; padding: 12px 16px; border: 2px solid #e8e8e8; border-radius: 12px; font-size: 14px; font-family: inherit; background: #F0F4F8; }
+    .search-input:focus { outline: none; border-color: #2060C0; background: #fff; }
+    .btn { padding: 10px 20px; border-radius: 10px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+    .btn-primary { background: #2060C0; color: #fff; flex: 1; }
+    .btn-dna { background: #1B7A3D; color: #fff; }; color: #fff; }
+    .btn-ghost { background: #F4F6F9; color: #555; border: 1px solid #e8e8e8; min-height: 44px; }
+    .action-row { display: flex; gap: 8px; margin-top: 10px; }
+    .result-card { background: #fff; border-radius: 12px; border: 1px solid #e8eaed; box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-bottom: 10px; overflow: hidden; }
+    .result-main { padding: 14px; display: flex; align-items: flex-start; gap: 12px; }
+    .score-badge { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .score-high { background: #1B7A3D; } .score-mid { background: #E8913A; color: #1C2833; } .score-low { background: #c0392b; }
+    .result-info { flex: 1; min-width: 0; }
+    .result-title { font-size: 14px; font-weight: 600; line-height: 1.3; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .result-meta { font-size: 11px; color: #888; display: flex; gap: 8px; flex-wrap: wrap; }
+    .pred-row { padding: 8px 14px; border-top: 1px solid #f4f4f4; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .pred-badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 10px; }
+    .pred-high { background: #d4edda; color: #155724; } .pred-mid { background: #fff3cd; color: #856404; } .pred-low { background: #f8d7da; color: #721c24; }
+    .pred-stat { font-size: 11px; color: #666; } .pred-stat b { color: #333; }
+    .comp-row { padding: 4px 14px 8px; font-size: 11px; color: #888; }
+    .contact-row { padding: 4px 14px 10px; font-size: 11px; color: #666; display: flex; gap: 12px; flex-wrap: wrap; }
+    .card-actions { display: flex; gap: 8px; padding: 0 14px 12px; }
+    .btn-xs { font-size: 11px; padding: 6px 12px; border-radius: 8px; border: 1px solid #e8e8e8; background: #F0F4F8; cursor: pointer; color: #555; font-weight: 500; }
+    .btn-xs.save { color: #2060C0; border-color: #2060C0; }
+    .risk-warn { color: #c0392b; font-weight: 600; } .risk-ok { color: #1B7A3D; }
+    .empty-state { text-align: center; padding: 30px; color: #888; font-size: 13px; }
+    .spinner { text-align: center; padding: 30px; color: #999; font-size: 13px; }
+    .risk-panel { padding: 10px 14px; border-top: 2px solid #2060C0; background: #f8f9ff; display: none; }
+    .risk-panel.show { display: block; }
+    .risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+    .risk-item { font-size: 10px; color: #555; padding: 6px 8px; background: #fff; border-radius: 6px; border: 1px solid #eee; }
+    .risk-item b { display: block; color: #333; font-size: 13px; margin-bottom: 2px; }
+    .risk-item .risk-label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .integrity-excellent { color: #155724; } .integrity-good { color: #1B7A3D; }
+    .integrity-fair { color: #856404; } .integrity-poor { color: #c0392b; } .integrity-critical { color: #721c24; }
+    .risk-header { font-size: 11px; font-weight: 700; color: #2060C0; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 8px; }
+    .bid-rec { padding: 8px 14px; border-top: 1px solid #f4f4f4; font-size: 12px; font-weight: 700; text-align: center; }
+    .bid-rec.BID { background: #d4edda; color: #155724; } .bid-rec.MAYBE { background: #fff3cd; color: #856404; } .bid-rec.SKIP { background: #f8d7da; color: #721c24; }
+
+    .help-tip { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; border-radius: 50%; background: #d0d5dd; color: #fff; font-size: 9px; font-weight: 700; cursor: help; position: relative; margin-left: 4px; vertical-align: middle; }
+    .help-tip:hover { background: #2060C0; }
+    .help-tip::after { content: attr(data-tip); position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%); background: #1C2833; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: 400; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.15s; z-index: 200; }
+    .help-tip:hover::after { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<div class="app-header">
+  <div><div class="app-title">Umucyo<span>Assistant</span></div><div class="app-tagline">Your AI-powered procurement partner</div></div>
+  <div class="lang-switch">
+    <button class="lang-btn active" onclick="setLang('EN')">EN</button>
+    <button class="lang-btn" onclick="setLang('FR')">FR</button>
+    <button class="lang-btn" onclick="setLang('KIN')">KIN</button>
+  </div>
+</div>
+<div class="navbar" id="navbar">
+  <div class="nav-group"><button class="nav-tab" onclick="navigate('dashboard')"><span class="nav-icon">🏠</span>Home</button></div>
+  <div class="nav-group">
+    <button class="nav-tab active" onclick="toggleDD('dd-opp')"><span class="nav-icon">📋</span>Opportunities ▾</button>
+    <div class="nav-dropdown" id="dd-opp">
+      <div class="dd-item" onclick="navigate('find')"><span class="nav-icon">🔍</span>Find Matches</div>
+      <div class="dd-item" onclick="navigate('check')"><span class="nav-icon">📋</span>Check Tender</div>
+    </div>
+  </div>
+  <div class="nav-group"><button class="nav-tab" onclick="toggleDD('dd-market')"><span class="nav-icon">📊</span>Market Intel ▾</button><div class="nav-dropdown" id="dd-market"><div class="dd-item" onclick="navigate('market')"><span class="nav-icon">📊</span>Market Dashboard</div><div class="dd-item" onclick="navigate('calendar')"><span class="nav-icon">📅</span>Calendar</div><div class="dd-item" onclick="navigate('ratings')"><span class="nav-icon">💰</span>Ratings</div><div class="dd-item" onclick="navigate('sector')"><span class="nav-icon">🏗️</span>Sectors</div><div class="dd-item" onclick="navigate('competitor')"><span class="nav-icon">🔍</span>Competitors</div></div></div>
+  <div class="nav-group"><button class="nav-tab" onclick="toggleDD('dd-tools')"><span class="nav-icon">🧰</span>My Tools ▾</button><div class="nav-dropdown" id="dd-tools"><div class="dd-item" onclick="navigate('dna')"><span class="nav-icon">🧬</span>My Business DNA</div><div class="dd-item" onclick="navigate('portfolio')"><span class="nav-icon">🏆</span>My Portfolio</div><div class="dd-item" onclick="navigate('insights')"><span class="nav-icon">💡</span>My Insights</div><div class="dd-item" onclick="navigate('compliance')"><span class="nav-icon">📝</span>Review Proposal</div><div class="dd-item" onclick="navigate('jv')"><span class="nav-icon">🤝</span>JV Partners</div></div></div>
+  <div class="nav-group"><button class="nav-tab" onclick="toggleDD('dd-learn')"><span class="nav-icon">📖</span>Learn ▾</button><div class="nav-dropdown" id="dd-learn"><div class="dd-item" onclick="navigate('learn')"><span class="nav-icon">📖</span>Learn</div>      <div class="dd-item" onclick="navigate('upgrade')"><span class="nav-icon">⭐</span>Upgrade</div>
+      <div class="dd-item" onclick="navigate('guide')"><span class="nav-icon">📖</span>User Guide</div>
+      <div class="dd-item admin-link" onclick="navigate('admin')" style="display:none"><span class="nav-icon">⚙️</span>Admin</div></div></div>
+</div>
+
+<div class="container">
+  <div class="main-card">
+    <div class="subtitle">Search for tenders or use your Business DNA to get AI-matched recommendations.</div>
+    <input class="search-input" id="searchInput" placeholder="Search tenders by keyword..." onkeypress="if(event.key=='Enter')doSearch()">
+    <div class="action-row">
+      <button class="btn btn-primary" onclick="doSearch()">Search</button>
+      <button class="btn btn-dna" onclick="useDNA()">Use My DNA</button>
+      <button class="btn btn-ghost" onclick="toggleFilters()">Filters</button>
+    </div>
+    <div class="action-row" style="margin-top:4px">
+      <button class="btn btn-ghost" id="genBtn" onclick="generateMatches()" style="width:100%;background:#e8f5e9;color:#1B7A3D;border-color:#c8e6c9">⚡ Generate My Matches</button>
+    </div>
+    <div id="filterPanel" style="display:none;margin-top:10px"><div class="action-row" style="flex-wrap:wrap"><div style="flex:1;min-width:80px"><label style="font-size:10px;font-weight:600;color:#999;display:block">Min Value</label><input class="search-input" id="minVal" placeholder="5M" type="number"></div><div style="flex:1;min-width:80px"><label style="font-size:10px;font-weight:600;color:#999;display:block">Max Value</label><input class="search-input" id="maxVal" placeholder="200M" type="number"></div><div style="flex:1;min-width:80px"><label style="font-size:10px;font-weight:600;color:#999;display:block">Method</label><select class="search-input" id="methodFilter"><option value="">All</option><option value="open">Open</option><option value="selective">Selective</option></select></div><div style="flex:1;min-width:80px"><label style="font-size:10px;font-weight:600;color:#999;display:block">Deadline</label><select class="search-input" id="deadlineFilter"><option value="">Any</option><option value="7">7 days</option><option value="14">14 days</option><option value="30">30 days</option></select></div></div></div>
+  </div>
+  <div id="resultsArea"><div class="empty-state"><p>Search or use your Business DNA to find matching tenders</p></div></div>
+</div>
+
+<script>
+var USER_ID = '<?= uid ?>' || '';
+(function(){var s=localStorage.getItem('umucyo_uid');if(s&&(!USER_ID||USER_ID==='test_user')&&window.location.search.indexOf('uid=')===-1){window.location.replace('?page=find&uid='+encodeURIComponent(s));}})();
+window.setLang = function(l) { document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.toggle('active', b.textContent === l); }); };
+window.toggleDD = function(id) { var target = document.getElementById(id); document.querySelectorAll('.nav-dropdown').forEach(function(d) { if (d !== target) d.classList.remove('show'); }); target.classList.toggle('show'); };
+document.addEventListener('click', function(e) { if (!e.target.closest('.nav-group')) { document.querySelectorAll('.nav-dropdown').forEach(function(d) { d.classList.remove('show'); }); } });
+var APP_URL = '';
+var DEPLOY_URL = '<?= ScriptApp.getService().getUrl() ?>';
+function navigate(p) { var url = '?page=' + p + (USER_ID ? '&uid=' + encodeURIComponent(USER_ID) : ''); if (DEPLOY_URL) { window.top.location.href = DEPLOY_URL + url; return; } if (APP_URL) { window.top.location.href = APP_URL + url; return; } google.script.run.withSuccessHandler(function(u) { APP_URL = u; window.top.location.href = u + url; }).withFailureHandler(function() { window.top.location.href = url; }).getAppUrl(); }
+function toggleFilters() { document.getElementById('filterPanel').style.display = document.getElementById('filterPanel').style.display === 'none' ? 'block' : 'none'; }
+function doSearch() {
+  var q = document.getElementById('searchInput').value.trim(); if (!q) return;
+  var f = { min_value: document.getElementById('minVal').value, max_value: document.getElementById('maxVal').value, method: document.getElementById('methodFilter').value, max_days: document.getElementById('deadlineFilter').value };
+  document.getElementById('resultsArea').innerHTML = '<div class="spinner">Searching...</div>';
+  google.script.run.withSuccessHandler(render).withFailureHandler(function(e) { document.getElementById('resultsArea').innerHTML = '<div class="empty-state"><p>' + esc(e.message) + '</p></div>'; }).searchTenders(q, f, USER_ID);
+}
+function useDNA() { document.getElementById('resultsArea').innerHTML = '<div class="spinner">Finding matches...</div>'; google.script.run.withSuccessHandler(render).getMatchesForWeb('', USER_ID); }
+function generateMatches() {
+  var btn = document.getElementById('genBtn'); btn.disabled = true; btn.textContent = 'Generating...';
+  document.getElementById('resultsArea').innerHTML = '<div class="spinner">Generating your matches...</div>';
+  google.script.run.withSuccessHandler(function(r) {
+    btn.disabled = false; btn.textContent = '⚡ Generate My Matches';
+    if (r && r.error) { document.getElementById('resultsArea').innerHTML = '<div class="empty-state"><p>' + esc(r.error) + '</p></div>'; return; }
+    useDNA();
+  }).withFailureHandler(function(e) {
+    btn.disabled = false; btn.textContent = '⚡ Generate My Matches';
+    document.getElementById('resultsArea').innerHTML = '<div class="empty-state"><p>Error: ' + esc(e.message) + '</p></div>';
+  }).generateMatchesNoAI(USER_ID);
+}
+function render(r) { var el = document.getElementById('resultsArea'); if (!r || !r.length) { el.innerHTML = '<div class="empty-state"><p>No tenders found.</p></div>'; return; } var h = ''; r.forEach(function(t) { var rc = (t.relevance || 0) >= 60 ? 'score-high' : ((t.relevance || 0) >= 30 ? 'score-mid' : 'score-low'); var wp = parseFloat(t.win_probability); var wpct = wp ? Math.round(wp * 100) : null; var pc = wpct >= 15 ? 'pred-high' : (wpct >= 5 ? 'pred-mid' : 'pred-low'); var rb = t.recommended_bid ? fmt(t.recommended_bid) : null; var eb = t.expected_bidders ? parseFloat(t.expected_bidders).toFixed(0) : null; var rp = parseFloat(t.buyer_amendment_pct);
+    h += '<div class="result-card"><div class="result-main"><div class="score-badge ' + rc + '" title="Match score: how relevant this tender is to your Business DNA. Higher = better fit.">' + (t.relevance || 0) + '</div><div class="result-info"><div class="result-title">' + esc(t.title) + '</div><div class="result-meta"><span><b>' + esc(t.entity) + '</b></span><span>' + ((t.est_value || 0) > 0 ? fmt(t.est_value) + ' RWF' : 'Value not published') + '</span><span>' + (esc(t.method) || 'Method N/A') + '</span><span>' + (t.num_tenderers || '?') + ' bidders</span>' + deadlineBadge(t) + '</div></div></div>';
+    if (wpct || eb || rb) { h += '<div class="pred-row">'; if (wpct) h += '<span class="pred-badge ' + pc + '" title="Historical chance of winning with this buyer. Based on past award patterns from BigQuery.">' + wpct + '% win</span>'; if (eb) h += '<span class="pred-stat">Avg: <b>' + eb + ' bidders <span class="help-tip" data-tip="Average number of companies that bid on this buyers tenders. Lower = less competition."></span></b></span>'; if (rb) h += '<span class="pred-stat">Bid: <b>' + rb + ' RWF <span class="help-tip" data-tip="Recommended bid amount based on historical winning bid ratios for this buyer."></span></b></span>'; if (rp != null && !isNaN(rp)) h += '<span class="pred-stat">Risk: ' + (rp >= 40 ? '<span class="risk-warn">' + rp + '% amended <span class="help-tip" data-tip="Percentage of this buyers contracts that get amended/changed after signing. High % = more cost/time risk."></span></span>' : '<span class="risk-ok">' + rp + '% amended <span class="help-tip" data-tip="Percentage of this buyers contracts that get amended/changed after signing."></span></span>') + '</span>'; h += '</div>'; }
+    if (t.top_competitors) h += '<div class="comp-row">Top winners: <b>' + esc(t.top_competitors.substring(0, 120)) + '</b></div>';
+    if (t.buyer_contact_phone || t.buyer_contact_email) { h += '<div class="contact-row">'; if (t.buyer_contact_phone) h += '<span>📞 <b>' + esc(t.buyer_contact_phone) + '</b></span>'; if (t.buyer_contact_email) h += '<span>✉️ <b>' + esc(t.buyer_contact_email) + '</b></span>'; h += '</div>'; }
+    var entEsc = esc(t.entity || '').replace(/'/g, "\\'"); var mth = esc(t.method || 'open').replace(/'/g, "\\'"); var ocidS = esc(t.ocid).replace(/[^a-zA-Z0-9]/g,'_');
+    h += '<div class="card-actions"><button class="btn-xs" onclick="toggleSave(\'' + escJs(t.ocid) + '\',this)">Save</button><button class="btn-xs" onclick="analyzeRisks(\'' + entEsc + '\',\'' + mth + '\',' + (t.est_value || 0) + ',\'' + ocidS + '\',this)" style="color:#2060C0;border-color:#2060C0">🔒 Risk Analysis</button><span style="flex:1"></span><a class="btn-xs share-wa" href="' + shareUrl('wa', t) + '" target="_blank" title="Share on WhatsApp" style="text-decoration:none;background:#25D366;color:#fff;border-color:#25D366">💬 WA</a><a class="btn-xs share-x" href="' + shareUrl('x', t) + '" target="_blank" title="Share on X" style="text-decoration:none;background:#000;color:#fff;border-color:#000">𝕏</a><a class="btn-xs share-li" href="' + shareUrl('li', t) + '" target="_blank" title="Share on LinkedIn" style="text-decoration:none;background:#0A66C2;color:#fff;border-color:#0A66C2">in</a><a class="btn-xs share-em" href="' + shareUrl('em', t) + '" target="_blank" title="Share by email" style="text-decoration:none;background:#E8913A;color:#fff;border-color:#E8913A">✉️</a></div>';
+    h += '<div class="risk-panel" id="rp-' + ocidS + '"></div>';
+    h += '</div>';
+  }); el.innerHTML = h; }
+function toggleSave(ocid, btn) { google.script.run.withSuccessHandler(function(s) { btn.textContent = s === 'saved' ? 'Saved' : 'Save'; btn.classList.toggle('save', s === 'saved'); }).withFailureHandler(function(e) { console.log('Save failed: ' + e.message); }).toggleSave(ocid, USER_ID); }
+function deadlineBadge(t) {
+  if (!t.deadline) return '';
+  var dl = new Date(t.deadline);
+  var now = new Date();
+  var diffDays = Math.ceil((dl - now) / (1000 * 60 * 60 * 24));
+  var label, color, bg;
+  if (diffDays < 0) { label = 'Closed'; color = '#721c24'; bg = '#f8d7da'; }
+  else if (diffDays <= 7) { label = 'Closing soon'; color = '#856404'; bg = '#fff3cd'; }
+  else { label = 'Open'; color = '#155724'; bg = '#d4edda'; }
+  var dateStr = dl.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  return '<span style="display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:600;background:' + bg + ';color:' + color + ';margin-left:4px;cursor:help" title="Deadline: ' + dateStr + ' · ' + (diffDays >= 0 ? diffDays + ' days remaining' : 'Past deadline') + '">📅 ' + label + '</span>';
+}
+function shareUrl(platform, t) {
+  var text = encodeURIComponent(t.title + ' — ' + t.entity + ' | ' + fmt(t.est_value) + ' RWF');
+  var url = encodeURIComponent(APP_URL + '?page=check&uid=' + (USER_ID || ''));
+  var maps = {
+    wa: 'https://wa.me/?text=' + text + '%20' + url,
+    x: 'https://x.com/intent/tweet?text=' + text + '&url=' + url,
+    li: 'https://linkedin.com/sharing/share-offsite/?url=' + url,
+    em: 'mailto:?subject=' + encodeURIComponent(t.title) + '&body=' + text + '%0A%0A' + url
+  };
+  return maps[platform] || '#';
+}
+function analyzeRisks(entity, method, estValue, ocidSafe, btn) {
+  var panel = document.getElementById('rp-' + ocidSafe);
+  if (!panel) return;
+  if (panel.classList.contains('show')) { panel.classList.remove('show'); btn.textContent = '🔒 Risk Analysis'; return; }
+  btn.textContent = 'Loading...'; btn.disabled = true;
+  panel.innerHTML = '<div class="spinner" style="padding:10px;font-size:11px">Loading risk analysis...</div>';
+  panel.classList.add('show');
+  google.script.run.withSuccessHandler(function(data) {
+    btn.textContent = '🔒 Risk Analysis'; btn.disabled = false;
+    if (data.blocked) { panel.innerHTML = '<div style="text-align:center;padding:12px;font-size:11px;color:#888">🔒 ' + esc(data.message) + '<br><button class="btn-xs" onclick="navigate(\'upgrade\')" style="margin-top:8px;background:#2060C0;color:#fff;border:none">Upgrade Now</button></div>'; return; }
+    if (data.error) { panel.innerHTML = '<div style="text-align:center;padding:12px;font-size:11px;color:#c0392b">Error: ' + esc(data.error) + '</div>'; return; }
+    var h = '';
+    var ci = data.price_ci; var bi = data.buyer_integrity; var tr = data.timeline_risk;
+    var cc = data.contract_completion; var acg = data.award_contract_gap;
+    var sl = data.signing_lag; var sb = data.single_bidder_risk;
+    var amr = data.amendment_value_ratio; var co = data.cost_overrun;
+    var bn = data.bid_no_bid;
+    if (bn) h += '<div class="bid-rec ' + esc(bn.recommendation) + '">' + esc(bn.recommendation) + ' (' + bn.confidence + '% confidence) — ' + esc(bn.reasons || '') + '</div>';
+    h += '<div class="risk-header" style="margin-top:6px">Trust & Risk Analysis</div><div class="risk-grid">';
+    if (bi) h += '<div class="risk-item"><span class="risk-label integrity-' + esc(bi.label).toLowerCase() + '">Buyer Integrity</span><b>' + bi.score + '/100 <small class="integrity-' + esc(bi.label).toLowerCase() + '">' + esc(bi.label) + '</small></b>' + (bi.amendment_pct ? 'Amendments: ' + bi.amendment_pct + '%' : '') + (bi.single_bidder_pct ? ' · Single-bid: ' + bi.single_bidder_pct + '%' : '') + '</div>';
+    if (ci && ci.low) h += '<div class="risk-item"><span class="risk-label">Bid Price Range</span><b>' + fmt(ci.low) + ' – ' + fmt(ci.high) + ' RWF</b>Median: ' + fmt(ci.median) + ' RWF</div>';
+    if (tr) h += '<div class="risk-item"><span class="risk-label">Timeline Risk</span><b>' + tr.risk_pct + '% <small>' + esc(tr.label) + '</small></b>' + tr.amendments_per_contract + ' amendments/contract, ' + tr.avg_contract_days + 'd avg</div>';
+    if (cc) h += '<div class="risk-item"><span class="risk-label">Contract Completion</span><b>' + cc.completion_pct + '% <small>' + esc(cc.label) + '</small></b>' + cc.completed + ' of ' + cc.total + ' contracts</div>';
+    if (acg) h += '<div class="risk-item"><span class="risk-label">Value Inflation</span><b>' + (acg.gap_pct >= 0 ? '+' : '') + acg.gap_pct + '%</b>Contract vs Award value (' + acg.count + ' contracts)</div>';
+    if (sl) h += '<div class="risk-item"><span class="risk-label">Signing Speed</span><b>' + sl.avg_lag_days + ' days <small>' + esc(sl.label) + '</small></b></div>';
+    if (sb) h += '<div class="risk-item"><span class="risk-label">Single-Bidder</span><b>' + sb.pct + '% <small>' + esc(sb.label) + '</small></b>' + sb.single_bidder_count + ' of ' + sb.total_tenders + ' tenders</div>';
+    if (amr) h += '<div class="risk-item"><span class="risk-label">Amendment Rate</span><b>' + amr.amendments_per_contract + '/contract</b>' + amr.amendment_count + ' amendments, ' + amr.contract_count + ' contracts</div>';
+    if (co) h += '<div class="risk-item"><span class="risk-label">Amendments</span><b>' + co.avg_amendments_per_contract + '/contract <small>' + esc(co.label) + '</small></b>' + co.amendment_count + ' amendments, ' + co.contract_count + ' contracts</div>';
+    h += '</div>';
+    panel.innerHTML = h || '<div style="text-align:center;padding:8px;font-size:10px;color:#888">No risk data available</div>';
+  }).withFailureHandler(function(e) {
+    btn.textContent = '🔒 Risk Analysis'; btn.disabled = false;
+    panel.innerHTML = '<div style="text-align:center;padding:12px;font-size:11px;color:#c0392b">Error: ' + esc(e.message || '') + '</div>';
+  }).getTrustIntel(entity, method, estValue, USER_ID);
+}
+function fmt(v) { if (!v) return '0'; var n = Number(v); if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B'; if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M'; return n.toLocaleString(); }
+function esc(s) { if (!s) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function escJs(s) { if (!s) return ''; return String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"'); }
+
+google.script.run.withSuccessHandler(function(url) { APP_URL = url; }).getAppUrl();
+google.script.run.withSuccessHandler(function(isAdmin){if(isAdmin)document.querySelectorAll('.admin-link').forEach(function(e){e.style.display='flex';});}).isAdmin(USER_ID);
+
+setTimeout(function(){
+  var m = location.search.match(/[?&]filter=([^&]+)/);
+  if (!m) return;
+  var filter = decodeURIComponent(m[1]);
+  if (filter === 'all') doSearch();
+  if (filter === 'new') { document.getElementById('resultsArea').innerHTML = '<div class="spinner">Loading new tenders...</div>'; google.script.run.withSuccessHandler(render).getNewThisWeekForWeb(USER_ID); }
+  if (filter === 'dna') useDNA();
+  if (filter === 'saved') { document.getElementById('resultsArea').innerHTML = '<div class="spinner">Loading saved...</div>'; google.script.run.withSuccessHandler(render).getSavedTendersForWeb(USER_ID); }
+}, 300);
+</script>
+<footer style="text-align:center;padding:16px 12px 24px;font-size:10px;color:#aaa;line-height:1.8">
+<p>🤖 AI-generated\ insights\ may\ contain\ inaccuracies\.\ Always\ verify\ with\ official\ <a\ href="https://umucyo\.gov\.rw"\ target="_blank">Umucyo</a>\ sources\.\ ·\ Report\ procurement\ corruption:\ <a\ href="https://www\.transparency\.org/en/report-corruption/rwanda"\ target="_blank"\ style="font-weight:600">TI-Rwanda\ ALAC</a>\ ·\ \+250\ 788\ 309\ 563 <a href="https://umucyo.gov.rw" target="_blank" style="color:#2060C0">Umucyo</a> sources.</p>
+<p><a href="?page=terms" onclick="navigate('terms');return false" style="color:#2060C0">Terms</a> · <a href="?page=privacy" onclick="navigate('privacy');return false" style="color:#2060C0">Privacy</a></p>
+</footer>
+</body>
+</html>

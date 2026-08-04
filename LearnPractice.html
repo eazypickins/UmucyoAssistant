@@ -1,0 +1,357 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head><title>Umucyo Assistant - Procurement Intelligence</title>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #F4F6F9;
+      color: #1C2833;
+    }
+
+    .app-header { background: #fff; border-bottom: 1px solid #e8eaed; padding: 14px 18px 10px; display: flex; align-items: flex-start; justify-content: space-between; }
+    .app-brand { line-height: 1.2; }
+    .app-title { font-size: 22px; font-weight: 700; color: #1C2833; }
+    .app-title span { color: #2060C0; }
+    .app-tagline { font-size: 12px; color: #999; margin-top: 1px; }
+    .lang-switch { display: flex; gap: 3px; }
+    .lang-btn { padding: 5px 10px; border-radius: 6px; border: 1px solid #e0e0e0; background: #fff; font-size: 11px; font-weight: 600; color: #888; cursor: pointer; }
+    .lang-btn.active { background: #2060C0; color: #fff; border-color: #2060C0; }
+    .navbar { background: #fff; border-bottom: 1px solid #e8eaed; position: relative; top: 0; z-index: 99; padding: 0 12px; display: flex; align-items: center; justify-content: center; overflow: visible; -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 2px; }
+    .navbar::-webkit-scrollbar { display: none; }
+    .nav-group { position: relative; flex-shrink: 0; }
+    .nav-tab { display: flex; align-items: center; gap: 5px; padding: 10px 12px; font-size: 13px; font-weight: 500; color: #666; cursor: pointer; border: none; background: transparent; white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.15s; font-family: inherit; }
+    .nav-tab:hover { color: #333; background: #F0F4F8; border-radius: 8px 8px 0 0; }
+    .nav-tab.active { color: #2060C0; font-weight: 600; border-bottom-color: #2060C0; }
+    .nav-icon { font-size: 15px; line-height: 1; }
+    .nav-dropdown { display: none; position: absolute; top: 100%; left: 0; background: #fff; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.12); min-width: 200px; padding: 6px; z-index: 100; }
+    .nav-dropdown.show { display: block; }
+    .dd-item { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 8px; font-size: 12px; color: #555; cursor: pointer; transition: background 0.1s; white-space: nowrap; }
+    .dd-item:hover { background: #E8F0FE; color: #2060C0; }
+    .dd-item .nav-icon { font-size: 13px; }
+    .btn {
+      padding: 7px 12px; border-radius: 6px; border: none;
+      font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap;
+    }
+    .btn-dark { background: rgba(255,255,255,0.12); color: white; }
+    .btn-ghost { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.2); }
+
+    .container { max-width: 600px; margin: 0 auto; padding: 12px 16px; }
+
+    .section {
+      background: white; padding: 16px; border-radius: 10px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 12px;
+    }
+
+    .section h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .section p { font-size: 12px; color: #888; margin-bottom: 10px; }
+
+    .lesson-card {
+      padding: 12px; border: 1px solid #eee; border-radius: 8px;
+      margin-bottom: 8px; cursor: pointer; transition: background 0.15s;
+    }
+    .lesson-card:hover { background: #f9f9f9; }
+    .lesson-title { font-size: 13px; font-weight: 500; color: #1C2833; }
+    .lesson-meta { font-size: 11px; color: #999; margin-top: 2px; }
+
+    .practice-box {
+      padding: 14px; background: #f0f7ff; border-radius: 8px;
+      border: 1px solid #d0e3ff;
+    }
+    .practice-box p { font-size: 12px; color: #444; margin-bottom: 8px; }
+
+    .btn-practice {
+      background: #2060C0; color: white; padding: 8px 16px;
+      border-radius: 6px; border: none; font-size: 12px; cursor: pointer;
+    }
+
+    .tutor-box {
+      background: #f0f7ff; padding: 16px; border-radius: 10px;
+      border: 1px solid #d0e3ff;
+    }
+
+    .tutor-input {
+      width: 100%; padding: 10px 14px; border: 2px solid #e0e0e0;
+      border-radius: 8px; font-size: 14px; margin-bottom: 8px;
+    }
+    .tutor-input:focus { outline: none; border-color: #2060C0; }
+
+    .tutor-area {
+      width: 100%; min-height: 100px; padding: 12px; border: 2px solid #e0e0e0;
+      border-radius: 8px; font-size: 13px; font-family: inherit; resize: vertical;
+      margin-bottom: 8px;
+    }
+    .tutor-area:focus { outline: none; border-color: #2060C0; }
+
+    .btn-tutor {
+      background: #1B7A3D; color: white; padding: 10px 16px;
+      border-radius: 6px; border: none; font-size: 13px; cursor: pointer;
+      width: 100%;
+    }
+    .btn-tutor:hover { background: #165A2E; }
+    .btn-tutor:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .tutor-response {
+      margin-top: 12px; padding: 14px; background: white;
+      border-radius: 8px; border-left: 3px solid #1B7A3D;
+      font-size: 13px; line-height: 1.6; color: #333;
+    }
+
+    .chat-messages {
+      max-height: 300px; overflow-y: auto; margin-bottom: 8px;
+    }
+
+    .chat-msg {
+      padding: 8px 12px; margin-bottom: 6px; border-radius: 8px;
+      font-size: 13px; line-height: 1.5; max-width: 85%;
+    }
+    .chat-msg.user {
+      background: #2060C0; color: white; margin-left: auto;
+    }
+    .chat-msg.assistant {
+      background: #f0f0f0; color: #333;
+    }
+
+    .spinner { text-align: center; padding: 16px; color: #999; font-size: 13px; }
+  </style>
+</head>
+
+<body>
+
+<div class="app-header">
+  <div class="app-brand">
+    <div class="app-title">Umucyo<span>Assistant</span></div>
+    <div class="app-tagline">Your AI-powered procurement partner</div>
+  </div>
+  <div class="lang-switch">
+    <button class="lang-btn active" onclick="setLang('EN')">EN</button>
+    <button class="lang-btn" onclick="setLang('FR')">FR</button>
+    <button class="lang-btn" onclick="setLang('KIN')">KIN</button>
+  </div>
+</div>
+<div class="navbar" id="navbar">
+  <div class="nav-group">
+    <button class="nav-tab" onclick="navigate('dashboard')"><span class="nav-icon">🏠</span>Home</button>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab" onclick="toggleDD('dd-opp')"><span class="nav-icon">📋</span>Opportunities ▾</button>
+    <div class="nav-dropdown" id="dd-opp">
+      <div class="dd-item" onclick="navigate('find')"><span class="nav-icon">🔍</span>Find Matches</div>
+      <div class="dd-item" onclick="navigate('check')"><span class="nav-icon">📋</span>Check Tender</div>
+    </div>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab" onclick="toggleDD('dd-market')"><span class="nav-icon">📊</span>Market Intel ▾</button>
+    <div class="nav-dropdown" id="dd-market">
+      <div class="dd-item" onclick="navigate('market')"><span class="nav-icon">📊</span>Market Dashboard</div>
+      <div class="dd-item" onclick="navigate('calendar')"><span class="nav-icon">📅</span>Procurement Calendar</div>
+      <div class="dd-item" onclick="navigate('ratings')"><span class="nav-icon">📊</span>Procurement Instability</div>
+      <div class="dd-item" onclick="navigate('sector')"><span class="nav-icon">🏗️</span>Sector Reports</div>
+      <div class="dd-item" onclick="navigate('competitor')"><span class="nav-icon">🔍</span>Competitors</div>
+    </div>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab" onclick="toggleDD('dd-tools')"><span class="nav-icon">🧰</span>My Tools ▾</button>
+    <div class="nav-dropdown" id="dd-tools">
+      <div class="dd-item" onclick="navigate('dna')"><span class="nav-icon">🧬</span>My Business DNA</div>
+      <div class="dd-item" onclick="navigate('portfolio')"><span class="nav-icon">🏆</span>My Portfolio</div>
+      <div class="dd-item" onclick="navigate('insights')"><span class="nav-icon">💡</span>My Insights</div>
+      <div class="dd-item" onclick="navigate('compliance')"><span class="nav-icon">📝</span>Review Proposal</div>
+      <div class="dd-item" onclick="navigate('jv')"><span class="nav-icon">🤝</span>JV Partners</div>
+    </div>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab active" onclick="toggleDD('dd-learn')"><span class="nav-icon">📖</span>Learn & Upgrade ▾</button>
+    <div class="nav-dropdown" id="dd-learn">
+      <div class="dd-item" onclick="navigate('learn')"><span class="nav-icon">📖</span>Learn & Practice</div>
+      <div class="dd-item" onclick="navigate('upgrade')"><span class="nav-icon">⭐</span>Upgrade Plan</div>
+      <div class="dd-item" onclick="navigate('guide')"><span class="nav-icon">📖</span>User Guide</div>
+      <div class="dd-item admin-link" onclick="navigate('admin')" style="display:none"><span class="nav-icon">⚙️</span>Admin</div>
+    </div>
+  </div>
+</div>
+<div class="container">
+
+  <div class="section">
+    <h3>📚 Lessons from RPPA Knowledge Base</h3>
+    <p>Click any lesson to get an AI-tutor explanation sourced from the official guides.</p>
+    <div id="lessonsList">
+      <div class="lesson-card" onclick="askWithTopic('Explain the complete e-bidding workflow on Umucyo from advertisement to contract signing. What are the steps and how long does each take?')">
+        <div class="lesson-title">E-Bidding Workflow — Step by Step</div>
+        <div class="lesson-meta">25 steps from plan to award · RPPA E-Procurement</div>
+      </div>
+      <div class="lesson-card" onclick="askWithTopic('What are the different procurement methods in Rwanda? When is open tender vs selective tender vs direct procurement used?')">
+        <div class="lesson-title">Procurement Methods Explained</div>
+        <div class="lesson-meta">Open, selective, direct, RFQ · RPPA Procedures</div>
+      </div>
+      <div class="lesson-card" onclick="askWithTopic('How do I register as a supplier on Umucyo? What documents do I need and what are the steps?')">
+        <div class="lesson-title">Supplier Registration Guide</div>
+        <div class="lesson-meta">Documents, steps, benefits · RPPA Registration</div>
+      </div>
+      <div class="lesson-card" onclick="askWithTopic('How does bid evaluation work in Rwanda? Explain scoring, evaluation committees, and how winners are selected.')">
+        <div class="lesson-title">Bid Evaluation & Award Process</div>
+        <div class="lesson-meta">Scoring, committees, criteria · RPPA Procedures</div>
+      </div>
+      <div class="lesson-card" onclick="askWithTopic('How do appeals and complaints work in Rwandan procurement? What is the Independent Review Panel and how do I file a complaint?')">
+        <div class="lesson-title">Appeals & Complaints Process</div>
+        <div class="lesson-meta">PE level → IRP escalation · RPPA E-Procurement</div>
+      </div>
+      <div class="lesson-card" onclick="askWithTopic('How does e-contract management, invoicing, and delivery tracking work on Umucyo after winning a tender?')">
+        <div class="lesson-title">Contract Management & Invoicing</div>
+        <div class="lesson-meta">E-contracts, delivery, payments · RPPA E-Procurement</div>
+      </div>
+      <div class="lesson-card" onclick="askWithTopic('How do District Sectors and Health Centers use Umucyo for procurement? What is the CBM role assignment process?')">
+        <div class="lesson-title">Sectors & Health Centers Procurement</div>
+        <div class="lesson-meta">District-level e-procurement · RPPA CBM</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>🎯 Practice</h3>
+    <p>Try a practice task based on a real past tender.</p>
+    <div class="practice-box">
+      <p><strong>Practice tender:</strong> Construction of a primary school classroom block in Gasabo District. Budget: 45M RWF. Deadline: 30 days.</p>
+      <p>Draft a 1-page technical response covering: your approach, team, timeline, and relevant experience.</p>
+      <button class="btn-practice" onclick="startPractice()">Start Practice</button>
+    </div>
+  </div>
+
+  <div class="section" style="border-left:3px solid #c0392b">
+    <h3>⚠️ Report Procurement Corruption</h3>
+    <p style="font-size:12px;color:#555;line-height:1.7">If you suspect fraud, bid rigging, or corruption in a procurement process, you are protected by Rwanda's whistleblower laws. Report safely and confidentially through Transparency International Rwanda's Advocacy and Legal Advice Centre (ALAC).</p>
+    <div style="margin-top:10px;padding:12px;background:#fdecea;border-radius:8px;font-size:12px;color:#555;line-height:1.8">
+      <b>📞 Call:</b> +250 788 309 563 / +250 788 309 583<br>
+      <b>✉️ Email:</b> info@tirwanda.org<br>
+      <b>🔗 Report online:</b> <a href="https://www.transparency.org/en/report-corruption/rwanda" target="_blank" style="color:#c0392b;font-weight:600">transparency.org/report-corruption/rwanda</a><br>
+      <b>🏢 Visit:</b> KN 3RD Street, Plot Nr 120, Kigali<br>
+      <span style="font-size:10px;color:#888">All reports are confidential. Whistleblowers are legally protected under Rwandan law.</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>💬 Ask the Procurement Tutor</h3>
+    <p>Ask any question about public procurement in Rwanda. Answers are sourced from official RPPA guides.</p>
+    <div id="chatMessages" class="chat-messages"></div>
+    <input class="tutor-input" id="tutorInput" placeholder="e.g. Why do I keep losing construction tenders?" onkeypress="if(event.key==='Enter')askTutor()">
+    <button class="btn-tutor" id="askBtn" onclick="askTutor()">Ask Tutor</button>
+  </div>
+
+</div>
+
+<script>
+var USER_ID = '<?= uid ?>' || '';
+window.toggleDD = function(id) { var target = document.getElementById(id); document.querySelectorAll('.nav-dropdown').forEach(function(d) { if (d !== target) d.classList.remove('show'); }); target.classList.toggle('show'); };
+document.addEventListener('click', function(e) { if (!e.target.closest('.nav-group')) { document.querySelectorAll('.nav-dropdown').forEach(function(d) { d.classList.remove('show'); }); } });
+window.setLang = function(l) { document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.toggle('active', b.textContent === l); }); };
+function askWithTopic(topic) {
+  document.getElementById('tutorInput').value = topic;
+  askTutor();
+}
+
+function startPractice() {
+  var response = prompt("Draft your 1-page technical response:\n\n(Describe your approach, team, timeline, and relevant experience)");
+  if (!response) return;
+  document.getElementById('tutorInput').value = "Review my practice response for the school construction tender: " + response;
+  askTutor();
+}
+
+function askTutor() {
+  var input = document.getElementById("tutorInput");
+  var question = input.value.trim();
+  if (!question) return;
+
+  var messages = document.getElementById("chatMessages");
+  messages.innerHTML += '<div class="chat-msg user">' + esc(question) + '</div>';
+  input.value = "";
+
+  document.getElementById("askBtn").disabled = true;
+  messages.innerHTML += '<div class="chat-msg assistant" id="tutorLoading">Thinking...</div>';
+  messages.scrollTop = messages.scrollHeight;
+
+  google.script.run
+    .withSuccessHandler(function(answer) {
+      var loading = document.getElementById("tutorLoading");
+      if (loading) loading.remove();
+      messages.innerHTML += '<div class="chat-msg assistant">' + md2html(answer) + '</div>';
+      messages.scrollTop = messages.scrollHeight;
+      document.getElementById("askBtn").disabled = false;
+    })
+    .withFailureHandler(function(err) {
+      var loading = document.getElementById("tutorLoading");
+      if (loading) loading.remove();
+      messages.innerHTML += '<div class="chat-msg assistant" style="color:#c0392b">Error: ' + esc(err.message) + '</div>';
+      messages.scrollTop = messages.scrollHeight;
+      document.getElementById("askBtn").disabled = false;
+    })
+    .askTutor(question, "", USER_ID);
+}
+
+function esc(s) {
+  if (!s) return "";
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function md2html(s) {
+  if (!s) return "";
+  var h = String(s);
+  h = h.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  h = h.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+  h = h.replace(/`([^`]+)`/g, '<code>$1</code>');
+  h = h.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  h = h.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  h = h.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  h = h.replace(/^### (.+)$/gm, '<h4>$1</h4>');
+  h = h.replace(/^## (.+)$/gm, '<h3>$1</h3>');
+  h = h.replace(/^# (.+)$/gm, '<h2>$1</h2>');
+  h = h.replace(/^- (.+)$/gm, '<li>$1</li>');
+  h = h.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+  h = h.replace(/(<li>.*<\/li>)/g, '<ul>$1</ul>');
+  h = h.replace(/<\/ul>\s*<ul>/g, '');
+  h = h.replace(/\n\n/g, '</p><p>');
+  h = '<p>' + h + '</p>';
+  h = h.replace(/<p><\/p>/g, '');
+  h = h.replace(/<p><ul>/g, '<ul>').replace(/<\/ul><\/p>/g, '</ul>');
+  h = h.replace(/<p><li>/g, '<li>').replace(/<\/li><\/p>/g, '</li>');
+  return h;
+}
+
+
+
+function goBack() { navigate('dashboard'); }
+
+// ── Navigation helper ──────────────────────────────────────────
+// In Google Apps Script web apps, relative ?page= URLs don't work
+// from inside the iframe. We resolve the full deployed URL first.
+var APP_URL = null;
+var DEPLOY_URL = '<?= ScriptApp.getService().getUrl() ?>';
+
+function navigate(page) {
+  if (DEPLOY_URL) {
+    window.top.location.href = DEPLOY_URL + '?page=' + page + (USER_ID ? '&uid=' + encodeURIComponent(USER_ID) : '');
+    return;
+  }
+  if (APP_URL) {
+    window.top.location.href = APP_URL + '?page=' + page + (USER_ID ? '&uid=' + encodeURIComponent(USER_ID) : '');
+    return;
+  }
+  google.script.run
+    .withSuccessHandler(function(url) {
+      APP_URL = url;
+      window.top.location.href = url + '?page=' + page + (USER_ID ? '&uid=' + encodeURIComponent(USER_ID) : '');
+    })
+    .withFailureHandler(function() {
+      window.top.location.href = '?page=' + page + (USER_ID ? '&uid=' + encodeURIComponent(USER_ID) : '');
+    })
+    .getAppUrl();
+}
+// ───────────────────────────────────────────────────────────────
+
+google.script.run.withSuccessHandler(function(url) { APP_URL = url; }).getAppUrl();
+google.script.run.withSuccessHandler(function(isAdmin){if(isAdmin)document.querySelectorAll('.admin-link').forEach(function(e){e.style.display='flex';});}).isAdmin(USER_ID);
+</script>
+
+</body>
+</html>

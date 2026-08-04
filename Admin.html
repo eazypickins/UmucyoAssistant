@@ -1,0 +1,177 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head><title>Umucyo Assistant - Procurement Intelligence</title>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #F4F6F9; color: #1C2833; }
+    .app-header { background: #fff; border-bottom: 1px solid #e8eaed; padding: 14px 18px 10px; display: flex; align-items: flex-start; justify-content: space-between; }
+    .app-brand { line-height: 1.2; }
+    .app-title { font-size: 22px; font-weight: 700; color: #1C2833; }
+    .app-title span { color: #2060C0; }
+    .app-tagline { font-size: 12px; color: #999; margin-top: 1px; }
+    .lang-switch { display: flex; gap: 3px; }
+    .lang-btn { padding: 5px 10px; border-radius: 6px; border: 1px solid #e0e0e0; background: #fff; font-size: 11px; font-weight: 600; color: #888; cursor: pointer; }
+    .lang-btn.active { background: #2060C0; color: #fff; border-color: #2060C0; }
+    .navbar { background: #fff; border-bottom: 1px solid #e8eaed; position: relative; top: 0; z-index: 99; padding: 0 12px; display: flex; align-items: center; justify-content: center; overflow: visible; -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 2px; }
+    .navbar::-webkit-scrollbar { display: none; }
+    .nav-group { position: relative; flex-shrink: 0; }
+    .nav-tab { display: flex; align-items: center; gap: 5px; padding: 10px 12px; font-size: 13px; font-weight: 500; color: #666; cursor: pointer; border: none; background: transparent; white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.15s; font-family: inherit; }
+    .nav-tab:hover { color: #333; background: #F0F4F8; border-radius: 8px 8px 0 0; }
+    .nav-tab.active { color: #2060C0; font-weight: 600; border-bottom-color: #2060C0; }
+    .nav-icon { font-size: 15px; line-height: 1; }
+    .nav-dropdown { display: none; position: absolute; top: 100%; left: 0; background: #fff; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.12); min-width: 200px; padding: 6px; z-index: 100; }
+    .nav-dropdown.show { display: block; }
+    .dd-item { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 8px; font-size: 12px; color: #555; cursor: pointer; transition: background 0.1s; white-space: nowrap; }
+    .dd-item:hover { background: #E8F0FE; color: #2060C0; }
+    .dd-item .nav-icon { font-size: 13px; }
+    .btn { padding: 7px 12px; border-radius: 6px; border: none; font-size: 12px; font-weight: 500; cursor: pointer; }
+    .btn-ghost { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.2); }
+    .btn-danger { background: #c0392b; color: white; }
+    .btn-approve { background: #1B7A3D; color: white; }
+    .btn-reject { background: #e74c3c; color: white; }
+    .container { max-width: 700px; margin: 0 auto; padding: 12px 16px; }
+    .section { background: white; padding: 16px; border-radius: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 12px; }
+    .section h3 { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+    .stat-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .stat-card { background: #f8f9fa; border-radius: 8px; flex: 1; text-align: center; padding: 12px 8px; }
+    .stat-num { font-size: 20px; font-weight: 700; color: #1C2833; }
+    .stat-label { font-size: 10px; color: #999; margin-top: 2px; }
+    .table-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f4f4f4; font-size: 12px; }
+    .table-row:last-child { border-bottom: none; }
+    .row-main { flex: 1; min-width: 0; }
+    .row-sub { font-size: 10px; color: #999; margin-top: 1px; }
+    .row-actions { display: flex; gap: 6px; margin-left: 10px; }
+    .btn-xs { padding: 4px 10px; border-radius: 4px; border: none; font-size: 11px; cursor: pointer; }
+    .reason-input { width: 200px; padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 11px; }
+    .empty { text-align: center; padding: 20px; color: #888; font-size: 13px; }
+    .spinner { text-align: center; padding: 30px; color: #999; font-size: 13px; }
+    .error-access { text-align: center; padding: 60px 20px; color: #c0392b; font-size: 15px; }
+  </style>
+</head>
+<body>
+<div class="app-header">
+  <div class="app-brand">
+    <div class="app-title">Umucyo<span>Assistant</span></div>
+    <div class="app-tagline">Your AI-powered procurement partner</div>
+  </div>
+  <div class="lang-switch">
+    <button class="lang-btn active" onclick="setLang('EN')">EN</button>
+    <button class="lang-btn" onclick="setLang('FR')">FR</button>
+    <button class="lang-btn" onclick="setLang('KIN')">KIN</button>
+  </div>
+</div>
+<div class="navbar" id="navbar">
+  <div class="nav-group">
+    <button class="nav-tab" onclick="navigate('dashboard')"><span class="nav-icon">🏠</span>Home</button>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab" onclick="toggleDD('dd-opp')"><span class="nav-icon">📋</span>Opportunities ▾</button>
+    <div class="nav-dropdown" id="dd-opp">
+      <div class="dd-item" onclick="navigate('find')"><span class="nav-icon">🔍</span>Find Matches</div>
+      <div class="dd-item" onclick="navigate('check')"><span class="nav-icon">📋</span>Check Tender</div>
+    </div>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab" onclick="toggleDD('dd-market')"><span class="nav-icon">📊</span>Market Intel ▾</button>
+    <div class="nav-dropdown" id="dd-market">
+      <div class="dd-item" onclick="navigate('market')"><span class="nav-icon">📊</span>Market Dashboard</div>
+      <div class="dd-item" onclick="navigate('calendar')"><span class="nav-icon">📅</span>Procurement Calendar</div>
+      <div class="dd-item" onclick="navigate('ratings')"><span class="nav-icon">📊</span>Procurement Instability</div>
+      <div class="dd-item" onclick="navigate('sector')"><span class="nav-icon">🏗️</span>Sector Reports</div>
+      <div class="dd-item" onclick="navigate('competitor')"><span class="nav-icon">🔍</span>Competitors</div>
+    </div>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab" onclick="toggleDD('dd-tools')"><span class="nav-icon">🧰</span>My Tools ▾</button>
+    <div class="nav-dropdown" id="dd-tools">
+      <div class="dd-item" onclick="navigate('dna')"><span class="nav-icon">🧬</span>My Business DNA</div>
+      <div class="dd-item" onclick="navigate('portfolio')"><span class="nav-icon">🏆</span>My Portfolio</div>
+      <div class="dd-item" onclick="navigate('insights')"><span class="nav-icon">💡</span>My Insights</div>
+      <div class="dd-item" onclick="navigate('compliance')"><span class="nav-icon">📝</span>Review Proposal</div>
+      <div class="dd-item" onclick="navigate('jv')"><span class="nav-icon">🤝</span>JV Partners</div>
+    </div>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab" onclick="toggleDD('dd-learn')"><span class="nav-icon">📖</span>Learn & Upgrade ▾</button>
+    <div class="nav-dropdown" id="dd-learn">
+      <div class="dd-item" onclick="navigate('learn')"><span class="nav-icon">📖</span>Learn & Practice</div>
+      <div class="dd-item" onclick="navigate('upgrade')"><span class="nav-icon">⭐</span>Upgrade Plan</div>
+      <div class="dd-item" onclick="navigate('guide')"><span class="nav-icon">📖</span>User Guide</div>
+      <div class="dd-item admin-link" onclick="navigate('admin')" style="display:none"><span class="nav-icon">⚙️</span>Admin</div>
+    </div>
+  </div>
+</div>
+<div class="container" id="content"><div class="spinner">Loading admin panel...</div></div>
+<script>
+var USER_ID = '<?= uid ?>' || '';
+window.toggleDD = function(id) { var target = document.getElementById(id); document.querySelectorAll('.nav-dropdown').forEach(function(d) { if (d !== target) d.classList.remove('show'); }); target.classList.toggle('show'); };
+document.addEventListener('click', function(e) { if (!e.target.closest('.nav-group')) { document.querySelectorAll('.nav-dropdown').forEach(function(d) { d.classList.remove('show'); }); } });
+window.setLang = function(l) { document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.toggle('active', b.textContent === l); }); };
+function loadAdmin() {
+  google.script.run
+    .withSuccessHandler(function(data) {
+      if (data.error) { document.getElementById("content").innerHTML = '<div class="error-access">' + esc(data.error) + '</div>'; return; }
+      render(data);
+    })
+    .withFailureHandler(function(e) { document.getElementById("content").innerHTML = '<div class="error-access">Error: ' + esc(e.message) + '</div>'; })
+    .getAdminDashboard(USER_ID);
+}
+
+function render(data) {
+  var html = '';
+  html += '<div class="section"><h3>Stats</h3><div class="stat-row">';
+  html += '<div class="stat-card"><div class="stat-num">' + (data.stats.total || 0) + '</div><div class="stat-label">Paid Users</div></div>';
+  html += '<div class="stat-card"><div class="stat-num">' + (data.stats.pro || 0) + '</div><div class="stat-label">Pro</div></div>';
+  html += '<div class="stat-card"><div class="stat-num">' + (data.stats.premium || 0) + '</div><div class="stat-label">Premium</div></div>';
+  html += '<div class="stat-card"><div class="stat-num">$' + fmtNum(data.stats.revenue || 0) + '</div><div class="stat-label">Revenue</div></div>';
+  html += '</div></div>';
+
+  html += '<div class="section"><h3>Pending Bank Transfers (' + (data.pending ? data.pending.length : 0) + ')</h3>';
+  if (data.pending && data.pending.length > 0) {
+    data.pending.forEach(function(p) {
+      html += '<div class="table-row">';
+      html += '<div class="row-main"><b>' + esc(p.user_id) + '</b><div class="row-sub">' + esc(p.tier || '') + ' · ' + fmtNum(p.amount || 0) + ' ' + esc(p.currency || 'RWF') + ' · Ref: ' + esc(p.payment_ref || 'N/A') + '</div></div>';
+      html += '<div class="row-actions">';
+      html += '<button class="btn-xs btn-approve" onclick="approve(\'' + esc(p.user_id) + '\', \'' + esc(p.tier || 'pro') + '\')">Approve</button>';
+      html += '<input class="reason-input" id="reason_' + esc(p._rowIndex) + '" placeholder="Reason...">';
+      html += '<button class="btn-xs btn-reject" onclick="reject(\'' + esc(p.user_id) + '\', document.getElementById(\'reason_' + esc(p._rowIndex) + '\').value)">Reject</button>';
+      html += '</div></div>';
+    });
+  } else { html += '<div class="empty">No pending transfers.</div>'; }
+  html += '</div>';
+
+  html += '<div class="section"><h3>Active Subscriptions (' + (data.active ? data.active.length : 0) + ')</h3>';
+  if (data.active && data.active.length > 0) {
+    data.active.slice(0, 30).forEach(function(a) {
+      html += '<div class="table-row"><div class="row-main"><b>' + esc(a.user_id) + '</b><div class="row-sub">' + esc(a.tier || '').toUpperCase() + ' · ' + esc(a.provider || '') + ' · Expires ' + (a.expires_at ? new Date(a.expires_at).toDateString() : '?') + '</div></div><span style="color:#1B7A3D;font-weight:600">' + fmtNum(a.amount || 0) + ' ' + esc(a.currency || 'RWF') + '</span></div>';
+    });
+  } else { html += '<div class="empty">No active subscriptions.</div>'; }
+  html += '</div>';
+
+  document.getElementById("content").innerHTML = html;
+}
+
+function approve(userId, tier) {
+  if (!confirm('Approve ' + userId + ' for ' + tier.toUpperCase() + '?')) return;
+  google.script.run.withSuccessHandler(function(r) { if (r.success) loadAdmin(); else alert(r.error); }).approveBankPayment(userId, tier);
+}
+
+function reject(userId, reason) {
+  if (!confirm('Reject ' + userId + '?')) return;
+  google.script.run.withSuccessHandler(function(r) { if (r.success) loadAdmin(); else alert(r.error); }).rejectBankPayment(userId, reason);
+}
+
+function fmtNum(n) { var v = parseInt(n) || 0; if (v >= 1e6) return (v/1e6).toFixed(1) + 'M'; if (v >= 1e3) return (v/1e3).toFixed(1) + 'K'; return v.toString(); }
+function esc(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function goBack() { navigate('dashboard'); }
+var APP_URL = null;
+var DEPLOY_URL = '<?= ScriptApp.getService().getUrl() ?>';
+function navigate(p) { var url = '?page=' + p + (USER_ID ? '&uid=' + encodeURIComponent(USER_ID) : ''); if (DEPLOY_URL) { window.top.location.href = DEPLOY_URL + url; return; } if (APP_URL) { window.top.location.href = APP_URL + url; return; } google.script.run.withSuccessHandler(function(u) { APP_URL = u; window.top.location.href = u + url; }).withFailureHandler(function() { window.top.location.href = url; }).getAppUrl(); }
+loadAdmin();
+google.script.run.withSuccessHandler(function(url) { APP_URL = url; }).getAppUrl();
+google.script.run.withSuccessHandler(function(isAdmin){if(isAdmin)document.querySelectorAll('.admin-link').forEach(function(e){e.style.display='flex';});}).isAdmin(USER_ID);
+</script>
+</body>
+</html>

@@ -1,0 +1,368 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head><title>Umucyo Assistant - Procurement Intelligence</title>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #F4F6F9;
+      color: #1C2833;
+    }
+
+    .app-header { background: #fff; border-bottom: 1px solid #e8eaed; padding: 14px 18px 10px; display: flex; align-items: flex-start; justify-content: space-between; }
+    .app-brand { line-height: 1.2; }
+    .app-title { font-size: 22px; font-weight: 700; color: #1C2833; }
+    .app-title span { color: #2060C0; }
+    .app-tagline { font-size: 12px; color: #999; margin-top: 1px; }
+    .lang-switch { display: flex; gap: 3px; }
+    .lang-btn { padding: 5px 10px; border-radius: 6px; border: 1px solid #e0e0e0; background: #fff; font-size: 11px; font-weight: 600; color: #888; cursor: pointer; }
+    .lang-btn.active { background: #2060C0; color: #fff; border-color: #2060C0; }
+    .navbar { background: #fff; border-bottom: 1px solid #e8eaed; position: relative; top: 0; z-index: 99; padding: 0 12px; display: flex; align-items: center; justify-content: center; overflow: visible; -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 2px; }
+    .navbar::-webkit-scrollbar { display: none; }
+    .nav-group { position: relative; flex-shrink: 0; }
+    .nav-tab { display: flex; align-items: center; gap: 5px; padding: 10px 12px; font-size: 13px; font-weight: 500; color: #666; cursor: pointer; border: none; background: transparent; white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.15s; font-family: inherit; }
+    .nav-tab:hover { color: #333; background: #F0F4F8; border-radius: 8px 8px 0 0; }
+    .nav-tab.active { color: #2060C0; font-weight: 600; border-bottom-color: #2060C0; }
+    .nav-icon { font-size: 15px; line-height: 1; }
+    .nav-dropdown { display: none; position: absolute; top: 100%; left: 0; background: #fff; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.12); min-width: 200px; padding: 6px; z-index: 100; }
+    .nav-dropdown.show { display: block; }
+    .dd-item { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 8px; font-size: 12px; color: #555; cursor: pointer; transition: background 0.1s; white-space: nowrap; }
+    .dd-item:hover { background: #E8F0FE; color: #2060C0; }
+    .dd-item .nav-icon { font-size: 13px; }
+    .btn {
+      padding: 7px 12px; border-radius: 6px; border: none;
+      font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap;
+    }
+    .btn-dark { background: rgba(255,255,255,0.12); color: white; }
+    .btn-ghost { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.2); }
+    .btn-main { background: #2060C0; color: white; }
+
+    .container { max-width: 600px; margin: 0 auto; padding: 12px 16px; }
+
+    .check-box {
+      background: white; padding: 20px; border-radius: 10px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 12px;
+    }
+
+    .check-box h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .check-box p { font-size: 12px; color: #888; margin-bottom: 12px; }
+
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 500; color: #444; margin-bottom: 4px; }
+
+    .text-input {
+      width: 100%; padding: 10px 14px; border: 2px solid #e0e0e0;
+      border-radius: 8px; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .text-input:focus { outline: none; border-color: #2060C0; }
+
+    .textarea-input {
+      width: 100%; min-height: 200px; padding: 12px; border: 2px solid #e0e0e0;
+      border-radius: 8px; font-size: 13px; font-family: inherit; resize: vertical;
+      transition: border-color 0.15s;
+    }
+    .textarea-input:focus { outline: none; border-color: #2060C0; }
+
+    .btn-check {
+      background: #1B7A3D; color: white; padding: 12px 20px;
+      border-radius: 8px; border: none; font-size: 14px; cursor: pointer;
+      width: 100%; margin-top: 8px;
+    }
+    .btn-check:hover { background: #165A2E; }
+    .btn-check:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .result-panel {
+      background: white; padding: 16px; border-radius: 10px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .result-section {
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .result-section:last-child { border-bottom: none; }
+
+    .result-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      color: #999; margin-bottom: 4px; letter-spacing: 0.3px;
+    }
+
+    .result-content {
+      font-size: 13px; line-height: 1.6; color: #333;
+    }
+
+    .result-content.missing { color: #c0392b; }
+    .result-content.weak { color: #E8913A; }
+    .result-content.flags { color: #c0392b; }
+    .result-content.fix { color: #1B7A3D; font-weight: 500; }
+
+    .coverage-badge {
+      display: inline-block; padding: 4px 10px; border-radius: 4px;
+      font-size: 13px; font-weight: 600; margin-bottom: 8px;
+    }
+    .coverage-good { background: #d4edda; color: #155724; }
+    .coverage-ok { background: #fff3cd; color: #856404; }
+    .coverage-bad { background: #f8d7da; color: #721c24; }
+
+    .spinner { text-align: center; padding: 16px; color: #999; font-size: 13px; }
+  </style>
+</head>
+
+<body>
+
+<div class="app-header">
+  <div class="app-brand">
+    <div class="app-title">Umucyo<span>Assistant</span></div>
+    <div class="app-tagline">Your AI-powered procurement partner</div>
+  </div>
+  <div class="lang-switch">
+    <button class="lang-btn active" onclick="setLang('EN')">EN</button>
+    <button class="lang-btn" onclick="setLang('FR')">FR</button>
+    <button class="lang-btn" onclick="setLang('KIN')">KIN</button>
+  </div>
+</div>
+<div class="navbar" id="navbar">
+  <div class="nav-group">
+    <button class="nav-tab" onclick="navigate('dashboard')"><span class="nav-icon">🏠</span>Home</button>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab" onclick="toggleDD('dd-opp')"><span class="nav-icon">📋</span>Opportunities ▾</button>
+    <div class="nav-dropdown" id="dd-opp">
+      <div class="dd-item" onclick="navigate('find')"><span class="nav-icon">🔍</span>Find Matches</div>
+      <div class="dd-item" onclick="navigate('check')"><span class="nav-icon">📋</span>Check Tender</div>
+    </div>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab" onclick="toggleDD('dd-market')"><span class="nav-icon">📊</span>Market Intel ▾</button>
+    <div class="nav-dropdown" id="dd-market">
+      <div class="dd-item" onclick="navigate('market')"><span class="nav-icon">📊</span>Market Dashboard</div>
+      <div class="dd-item" onclick="navigate('calendar')"><span class="nav-icon">📅</span>Procurement Calendar</div>
+      <div class="dd-item" onclick="navigate('ratings')"><span class="nav-icon">📊</span>Procurement Instability</div>
+      <div class="dd-item" onclick="navigate('sector')"><span class="nav-icon">🏗️</span>Sector Reports</div>
+      <div class="dd-item" onclick="navigate('competitor')"><span class="nav-icon">🔍</span>Competitors</div>
+    </div>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab active" onclick="toggleDD('dd-tools')"><span class="nav-icon">🧰</span>My Tools ▾</button>
+    <div class="nav-dropdown" id="dd-tools">
+      <div class="dd-item" onclick="navigate('dna')"><span class="nav-icon">🧬</span>My Business DNA</div>
+      <div class="dd-item" onclick="navigate('portfolio')"><span class="nav-icon">🏆</span>My Portfolio</div>
+      <div class="dd-item" onclick="navigate('insights')"><span class="nav-icon">💡</span>My Insights</div>
+      <div class="dd-item" onclick="navigate('compliance')"><span class="nav-icon">📝</span>Review Proposal</div>
+      <div class="dd-item" onclick="navigate('jv')"><span class="nav-icon">🤝</span>JV Partners</div>
+    </div>
+  </div>
+  <div class="nav-group">
+    <button class="nav-tab" onclick="toggleDD('dd-learn')"><span class="nav-icon">📖</span>Learn & Upgrade ▾</button>
+    <div class="nav-dropdown" id="dd-learn">
+      <div class="dd-item" onclick="navigate('learn')"><span class="nav-icon">📖</span>Learn & Practice</div>
+      <div class="dd-item" onclick="navigate('upgrade')"><span class="nav-icon">⭐</span>Upgrade Plan</div>
+      <div class="dd-item" onclick="navigate('guide')"><span class="nav-icon">📖</span>User Guide</div>
+      <div class="dd-item admin-link" onclick="navigate('admin')" style="display:none"><span class="nav-icon">⚙️</span>Admin</div>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="check-box">
+    <h3>Review My Proposal</h3>
+    <p>Paste your draft proposal or list of what you plan to submit. We'll check it against the tender requirements.</p>
+
+    <div class="form-group">
+      <label>Which tender is this for?</label>
+      <input class="text-input" id="tenderId" placeholder="OCID, title, or leave blank for general check">
+    </div>
+
+    <div class="form-group">
+      <label>Your draft proposal or submission list</label>
+      <textarea class="textarea-input" id="proposalText" placeholder="Paste your draft here...&#10;&#10;For example:&#10;- Company registration certificate&#10;- Tax clearance letter&#10;- Technical proposal (2 pages)&#10;- Financial proposal: 45M RWF&#10;- CV of project manager&#10;- Past experience: 3 similar contracts"></textarea>
+    </div>
+
+    <button class="btn-check" id="checkBtn" onclick="doCheck()">Check Compliance</button>
+  </div>
+
+  <div id="resultArea"></div>
+</div>
+
+<script>
+var USER_ID = '<?= uid ?>' || '';
+window.toggleDD = function(id) { var target = document.getElementById(id); document.querySelectorAll('.nav-dropdown').forEach(function(d) { if (d !== target) d.classList.remove('show'); }); target.classList.toggle('show'); };
+document.addEventListener('click', function(e) { if (!e.target.closest('.nav-group')) { document.querySelectorAll('.nav-dropdown').forEach(function(d) { d.classList.remove('show'); }); } });
+window.setLang = function(l) { document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.toggle('active', b.textContent === l); }); };
+function doCheck() {
+  var proposal = document.getElementById("proposalText").value.trim();
+  if (!proposal) {
+    alert("Please paste your draft proposal first.");
+    return;
+  }
+
+  var tenderId = document.getElementById("tenderId").value.trim();
+
+  document.getElementById("checkBtn").disabled = true;
+  document.getElementById("resultArea").innerHTML = '<div class="spinner">Checking compliance...</div>';
+
+  // If tender ID provided, look it up first
+  if (tenderId) {
+    google.script.run
+      .withSuccessHandler(function(result) {
+        if (result.found) {
+          runCompliance(proposal, result.tender);
+        } else {
+          // Use generic context
+          runCompliance(proposal, { title: tenderId, description: "", method: "", est_value: 0, checklist: "" });
+        }
+      })
+      .withFailureHandler(function(err) {
+        runCompliance(proposal, { title: tenderId, description: "", method: "", est_value: 0, checklist: "" });
+      })
+      .lookupTender(tenderId, USER_ID);
+  } else {
+    runCompliance(proposal, { title: "General", description: "", method: "open", est_value: 0, checklist: "" });
+  }
+}
+
+function runCompliance(proposal, tenderContext) {
+  google.script.run
+    .withSuccessHandler(function(report) {
+      renderReport(report);
+      document.getElementById("checkBtn").disabled = false;
+    })
+    .withFailureHandler(function(err) {
+      document.getElementById("resultArea").innerHTML =
+        '<div style="text-align:center;padding:20px;color:#c0392b">Error: ' + esc(err.message) + '</div>';
+      document.getElementById("checkBtn").disabled = false;
+    })
+    .checkCompliance(proposal, tenderContext, USER_ID);
+}
+
+function renderReport(report) {
+  var el = document.getElementById("resultArea");
+
+  // Parse the AI response into sections
+  var lines = report.split("\n");
+  var sections = { coverage: "", missing: "", weak: "", flags: "", fix: "" };
+  var currentSection = "";
+
+  lines.forEach(function(line) {
+    var lower = line.toLowerCase().trim();
+    if (lower.indexOf("coverage:") === 0) {
+      currentSection = "coverage";
+      sections.coverage = line.substring(9).trim();
+    } else if (lower.indexOf("missing:") === 0) {
+      currentSection = "missing";
+      sections.missing = line.substring(8).trim();
+    } else if (lower.indexOf("weak") === 0) {
+      currentSection = "weak";
+      sections.weak = line.substring(line.indexOf(":") + 1).trim();
+    } else if (lower.indexOf("red flag") === 0 || lower.indexOf("flag") === 0) {
+      currentSection = "flags";
+      sections.flags = line.substring(line.indexOf(":") + 1).trim();
+    } else if (lower.indexOf("quick fix:") === 0) {
+      currentSection = "fix";
+      sections.fix = line.substring(10).trim();
+    } else if (line.trim()) {
+      if (currentSection) {
+        sections[currentSection] += "\n" + line.trim();
+      }
+    }
+  });
+
+  // Determine coverage badge
+  var coverageClass = "coverage-ok";
+  if (sections.coverage) {
+    var match = sections.coverage.match(/(\d+)\s*\/\s*(\d+)/);
+    if (match) {
+      var pct = parseInt(match[1]) / parseInt(match[2]);
+      if (pct >= 0.8) coverageClass = "coverage-good";
+      else if (pct < 0.5) coverageClass = "coverage-bad";
+    }
+  }
+
+  var html = '<div class="result-panel">';
+
+  if (sections.coverage) {
+    html += '<div class="coverage-badge ' + coverageClass + '">' + esc(sections.coverage) + '</div>';
+  }
+
+  if (sections.missing) {
+    html += '<div class="result-section">';
+    html += '<div class="result-label">Missing</div>';
+    html += '<div class="result-content missing">' + esc(sections.missing).replace(/\n/g, "<br>") + '</div>';
+    html += '</div>';
+  }
+
+  if (sections.weak) {
+    html += '<div class="result-section">';
+    html += '<div class="result-label">Weak Points</div>';
+    html += '<div class="result-content weak">' + esc(sections.weak).replace(/\n/g, "<br>") + '</div>';
+    html += '</div>';
+  }
+
+  if (sections.flags) {
+    html += '<div class="result-section">';
+    html += '<div class="result-label">Red Flags</div>';
+    html += '<div class="result-content flags">' + esc(sections.flags).replace(/\n/g, "<br>") + '</div>';
+    html += '</div>';
+  }
+
+  if (sections.fix) {
+    html += '<div class="result-section">';
+    html += '<div class="result-label">Quick Fix</div>';
+    html += '<div class="result-content fix">' + esc(sections.fix) + '</div>';
+    html += '</div>';
+  }
+
+  var hasAny = sections.coverage || sections.missing || sections.weak || sections.flags || sections.fix;
+  if (!hasAny) {
+    html += '<div class="info-grid" style="margin:12px 0"><div class="info-item" style="grid-column:1/-1;white-space:pre-wrap">' + esc(report) + '</div></div>';
+    el.innerHTML = '<div class="main-card">' + html + '</div>';
+    return;
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function esc(s) {
+  if (!s) return "";
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+
+
+function goBack() { navigate('dashboard'); }
+
+// ── Navigation helper ──────────────────────────────────────────
+// In Google Apps Script web apps, relative ?page= URLs don't work
+// from inside the iframe. We resolve the full deployed URL first.
+var APP_URL = null;
+var DEPLOY_URL = '<?= ScriptApp.getService().getUrl() ?>';
+
+function navigate(page) {
+  if (DEPLOY_URL) {
+    window.top.location.href = DEPLOY_URL + '?page=' + page + (USER_ID ? '&uid=' + encodeURIComponent(USER_ID) : '');
+    return;
+  }
+  if (APP_URL) {
+    window.top.location.href = APP_URL + '?page=' + page + (USER_ID ? '&uid=' + encodeURIComponent(USER_ID) : '');
+    return;
+  }
+  google.script.run
+    .withSuccessHandler(function(url) {
+      APP_URL = url;
+      window.top.location.href = url + '?page=' + page + (USER_ID ? '&uid=' + encodeURIComponent(USER_ID) : '');
+    })
+    .withFailureHandler(function() {
+      window.top.location.href = '?page=' + page + (USER_ID ? '&uid=' + encodeURIComponent(USER_ID) : '');
+    })
+    .getAppUrl();
+}
+// ───────────────────────────────────────────────────────────────
+
+google.script.run.withSuccessHandler(function(url) { APP_URL = url; }).getAppUrl();
+google.script.run.withSuccessHandler(function(isAdmin){if(isAdmin)document.querySelectorAll('.admin-link').forEach(function(e){e.style.display='flex';});}).isAdmin(USER_ID);
+</script>
+
+</body>
+</html>
