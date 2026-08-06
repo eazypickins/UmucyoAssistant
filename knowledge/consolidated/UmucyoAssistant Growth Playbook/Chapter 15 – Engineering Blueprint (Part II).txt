@@ -1,0 +1,531 @@
+# Chapter 15
+
+# Engineering Blueprint (Part II)
+
+## Objective
+
+This chapter defines the technical architecture required to build UmucyoAssistant as an enterprise-grade, AI-powered Procurement Intelligence Platform.
+
+The emphasis is on scalability, maintainability, explainability, and modular growth.
+
+The architecture should allow new AI agents, datasets, workflows, and integrations to be added with minimal disruption.
+
+---
+
+# High-Level Architecture
+
+```
+                    Web Application
+                         │
+                    Mobile Application
+                         │
+                API Gateway / Backend
+                         │
+──────────────────────────────────────────────────
+
+Authentication Service
+
+Organization Service
+
+Tender Service
+
+Proposal Service
+
+Readiness Service
+
+Academy Service
+
+Community Service
+
+Notification Service
+
+Analytics Service
+
+AI Orchestrator
+
+──────────────────────────────────────────────────
+
+BigQuery Intelligence Layer
+
+Knowledge Layer
+
+Document Storage
+
+Operational Database
+
+Search Index
+
+──────────────────────────────────────────────────
+
+Umucyo APIs
+
+Email
+
+WhatsApp
+
+Calendar
+
+Future Third-Party APIs
+
+```
+
+Each service should be independently deployable where practical.
+
+---
+
+# Core Database Domains
+
+Separate operational data into bounded domains.
+
+## Identity
+
+Organizations
+
+Users
+
+Roles
+
+Permissions
+
+Subscriptions
+
+Audit Logs
+
+---
+
+## Procurement
+
+Tender Metadata
+
+Tender Categories
+
+Buyers
+
+Opportunity Scores
+
+Saved Opportunities
+
+Tender History
+
+Watchlists
+
+---
+
+## Proposal Management
+
+Proposals
+
+Proposal Versions
+
+Proposal Scores
+
+AI Feedback
+
+Reviewer Comments
+
+Submission Records
+
+Proposal Templates
+
+---
+
+## Procurement Readiness
+
+Certificates
+
+Compliance Documents
+
+Renewal Dates
+
+Readiness Assessments
+
+Improvement Plans
+
+Capability Scores
+
+---
+
+## Academy
+
+Courses
+
+Lessons
+
+Assessments
+
+Certificates
+
+Learning Progress
+
+Quiz Results
+
+---
+
+## Community
+
+Discussion Posts
+
+Comments
+
+Events
+
+Workshop Registrations
+
+Referral Records
+
+Success Stories
+
+---
+
+# BigQuery Intelligence Warehouse
+
+Maintain analytical data separately from transactional data.
+
+Suggested datasets include:
+
+Historical Tenders
+
+Award History
+
+Supplier Participation
+
+Buyer Profiles
+
+Category Performance
+
+Regional Procurement Trends
+
+Contract Values
+
+Sector Analysis
+
+Tender Timelines
+
+Historical Evaluation Patterns (where publicly available)
+
+This separation ensures analytical workloads do not impact operational performance.
+
+---
+
+# AI Orchestrator
+
+Every AI request should pass through an orchestration layer.
+
+Responsibilities:
+
+Determine the user's intent.
+
+Select the appropriate AI agent.
+
+Retrieve contextual information.
+
+Retrieve relevant knowledge.
+
+Execute BigQuery analysis if required.
+
+Generate response.
+
+Log interaction.
+
+Collect feedback.
+
+This avoids duplicating logic across multiple AI agents.
+
+---
+
+# Retrieval-Augmented Generation (RAG)
+
+Every AI response should be grounded in authoritative context.
+
+Potential sources include:
+
+* Public procurement regulations.
+* Umucyo training materials (where licensing permits).
+* Academy content.
+* Internal knowledge articles.
+* Historical procurement insights.
+* Customer-specific documents (private).
+* Proposal templates.
+* Frequently asked questions.
+
+Responses should clearly distinguish between:
+
+* Historical evidence.
+* Current user data.
+* AI recommendations.
+
+This improves transparency and user trust.
+
+---
+
+# Event-Driven Workflows
+
+Rather than relying only on scheduled jobs, important business events should trigger automated actions.
+
+Examples:
+
+New matching tender published
+
+↓
+
+Calculate Opportunity Score™
+
+↓
+
+Notify customer
+
+↓
+
+Recommend Academy lesson if readiness is low
+
+↓
+
+Create dashboard notification
+
+↓
+
+Schedule reminder before submission deadline
+
+Other events include:
+
+Proposal uploaded.
+
+Certificate nearing expiration.
+
+Academy course completed.
+
+Subscription renewed.
+
+Workshop registration.
+
+Proposal review finished.
+
+---
+
+# Notification Engine
+
+Support multiple delivery channels.
+
+Priority order:
+
+In-app.
+
+Email.
+
+WhatsApp (opt-in).
+
+SMS (for critical reminders, if supported).
+
+Notifications should respect user preferences and quiet hours where possible.
+
+---
+
+# Search Architecture
+
+Support intelligent search across:
+
+Tenders.
+
+Proposals.
+
+Knowledge Base.
+
+Academy.
+
+Community.
+
+Reports.
+
+Users should be able to search naturally, for example:
+
+"Find hospital ICT tenders in the last five years."
+
+"Show buyers who frequently purchase engineering services."
+
+---
+
+# Security Model
+
+Security should follow the principle of least privilege.
+
+Requirements:
+
+Role-based access control.
+
+Organization isolation (multi-tenancy).
+
+Encrypted document storage.
+
+Encrypted secrets.
+
+Audit logging.
+
+Secure API authentication.
+
+Session management.
+
+Regular backups.
+
+Input validation.
+
+Rate limiting.
+
+Where AI responses use customer documents, ensure they remain isolated to that customer's workspace unless explicit permission is granted.
+
+---
+
+# Audit & Explainability
+
+Every AI-assisted decision should be traceable.
+
+Record:
+
+Prompt used.
+
+Knowledge sources consulted.
+
+BigQuery queries executed.
+
+Confidence indicators (where meaningful).
+
+User feedback.
+
+Timestamp.
+
+This enables continuous improvement and supports troubleshooting.
+
+---
+
+# API Strategy
+
+Design all core services as APIs.
+
+Potential endpoints:
+
+Organizations.
+
+Users.
+
+Tenders.
+
+Proposals.
+
+Readiness.
+
+Academy.
+
+Reports.
+
+Notifications.
+
+AI.
+
+This allows future integrations with CRM systems, ERP platforms, or procurement tools.
+
+---
+
+# Deployment Strategy
+
+Suggested environments:
+
+Development.
+
+Testing.
+
+Staging.
+
+Production.
+
+Use continuous integration and continuous deployment (CI/CD).
+
+Automated testing should include:
+
+Unit tests.
+
+Integration tests.
+
+End-to-end tests.
+
+AI evaluation tests.
+
+Regression testing.
+
+---
+
+# Observability
+
+Monitor:
+
+System uptime.
+
+API latency.
+
+AI response time.
+
+Notification delivery.
+
+BigQuery performance.
+
+Database health.
+
+Error rates.
+
+Customer activity.
+
+Operational visibility is essential as the platform scales.
+
+---
+
+# Technical Roadmap
+
+### Phase 1
+
+Core platform.
+
+Tender discovery.
+
+Proposal workspace.
+
+Readiness dashboard.
+
+Academy.
+
+---
+
+### Phase 2
+
+Multi-agent AI.
+
+Opportunity Score™.
+
+BigQuery analytics.
+
+Executive dashboards.
+
+---
+
+### Phase 3
+
+Benchmarking.
+
+Forecasting.
+
+Partner portal.
+
+Enterprise features.
+
+Public APIs.
+
+Regional expansion.
+
+---
+
+# Engineering Principle
+
+Every new feature should answer at least one question:
+
+Does it help customers make better procurement decisions?
+
+If not, reconsider whether it belongs in the platform.
+
+Engineering effort should always reinforce the mission of improving procurement capability.

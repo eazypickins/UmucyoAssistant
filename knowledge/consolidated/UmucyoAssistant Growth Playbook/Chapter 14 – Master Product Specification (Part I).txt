@@ -1,0 +1,589 @@
+# Chapter 14
+
+# Master Product Specification (Part I)
+
+## Purpose
+
+This document defines the functional architecture of UmucyoAssistant.
+
+It serves as the primary reference for product management, software engineering, AI development, UX design, testing, and future expansion.
+
+Every feature should support the company's mission:
+
+**Reduce uncertainty and increase procurement capability for every customer.**
+
+---
+
+# Product Vision
+
+UmucyoAssistant is an AI-powered Procurement Intelligence Platform that combines:
+
+* Procurement opportunity discovery.
+* Historical procurement intelligence.
+* Proposal development.
+* Procurement readiness.
+* Continuous education.
+* Market analytics.
+* Executive decision support.
+
+The platform enables organizations to discover, evaluate, prepare for, and succeed in procurement opportunities through intelligent recommendations supported by historical procurement data.
+
+---
+
+# Product Architecture
+
+The platform consists of eight integrated layers.
+
+## Layer 1
+
+Identity & Organization
+
+Functions:
+
+Authentication.
+
+Organizations.
+
+Users.
+
+Roles.
+
+Permissions.
+
+Subscription management.
+
+Audit logs.
+
+---
+
+## Layer 2
+
+Procurement Intelligence
+
+Historical procurement warehouse.
+
+BigQuery integration.
+
+Trend analysis.
+
+Forecasting.
+
+Buyer intelligence.
+
+Sector intelligence.
+
+Opportunity scoring.
+
+Benchmarking.
+
+---
+
+## Layer 3
+
+Opportunity Management
+
+Tender discovery.
+
+Personalized matching.
+
+Opportunity Score™.
+
+Saved opportunities.
+
+Watchlists.
+
+Submission calendar.
+
+Opportunity history.
+
+---
+
+## Layer 4
+
+Proposal Workspace
+
+Proposal drafting.
+
+AI generation.
+
+Proposal review.
+
+Compliance checking.
+
+Scoring.
+
+Templates.
+
+Version history.
+
+Document export.
+
+---
+
+## Layer 5
+
+Procurement Readiness
+
+Readiness assessment.
+
+Document vault.
+
+Certification management.
+
+Renewal reminders.
+
+Compliance dashboard.
+
+Capability tracking.
+
+---
+
+## Layer 6
+
+Academy
+
+Courses.
+
+Lessons.
+
+Assessments.
+
+Certificates.
+
+Learning recommendations.
+
+Progress tracking.
+
+---
+
+## Layer 7
+
+Community & Growth
+
+Workshops.
+
+Webinars.
+
+Events.
+
+Procurement Pulse.
+
+Discussion community.
+
+Referral programme.
+
+Customer success.
+
+---
+
+## Layer 8
+
+Administration
+
+Analytics.
+
+Content management.
+
+AI configuration.
+
+System monitoring.
+
+Partner management.
+
+Billing.
+
+---
+
+# Core User Roles
+
+## Organization Owner
+
+Full administrative access.
+
+Subscription management.
+
+Executive reporting.
+
+---
+
+## Procurement Manager
+
+Tender management.
+
+Proposal preparation.
+
+Readiness.
+
+Reporting.
+
+---
+
+## Proposal Writer
+
+Proposal drafting.
+
+Proposal review.
+
+Templates.
+
+Document management.
+
+---
+
+## Executive
+
+Strategic dashboards.
+
+Forecasts.
+
+Procurement intelligence.
+
+Performance monitoring.
+
+---
+
+## Compliance Officer
+
+Document management.
+
+Certificate tracking.
+
+Eligibility monitoring.
+
+Audit support.
+
+---
+
+## Academy Learner
+
+Courses.
+
+Assessments.
+
+Certificates.
+
+Learning pathways.
+
+---
+
+## System Administrator
+
+Platform management.
+
+AI configuration.
+
+Analytics.
+
+Content moderation.
+
+Partner administration.
+
+---
+
+# AI Agent Architecture
+
+The platform should implement specialized AI agents.
+
+## Procurement Copilot
+
+Primary conversational interface.
+
+Coordinates all other agents.
+
+Maintains conversation context.
+
+Provides personalized recommendations.
+
+---
+
+## Tender Discovery Agent
+
+Matches opportunities.
+
+Ranks tenders.
+
+Calculates Opportunity Score™.
+
+Identifies emerging sectors.
+
+---
+
+## Proposal Coach
+
+Generates proposal drafts.
+
+Improves writing quality.
+
+Checks evaluation criteria.
+
+Suggests improvements.
+
+Produces proposal quality scores.
+
+---
+
+## Compliance Agent
+
+Reviews mandatory requirements.
+
+Identifies missing documentation.
+
+Calculates readiness.
+
+Generates compliance checklists.
+
+---
+
+## Intelligence Analyst
+
+Queries BigQuery.
+
+Summarizes historical procurement activity.
+
+Produces market reports.
+
+Answers analytical questions.
+
+Supports forecasting.
+
+---
+
+## Readiness Advisor
+
+Tracks certificates.
+
+Monitors compliance.
+
+Calculates Procurement Readiness Score.
+
+Generates improvement plans.
+
+---
+
+## Academy Tutor
+
+Explains procurement concepts.
+
+Recommends learning.
+
+Creates quizzes.
+
+Tracks progress.
+
+Provides contextual education.
+
+---
+
+## Executive Advisor
+
+Creates executive summaries.
+
+Measures procurement performance.
+
+Produces quarterly reports.
+
+Highlights business risks.
+
+---
+
+## Opportunity Forecaster
+
+Analyses historical procurement cycles.
+
+Predicts demand.
+
+Identifies seasonal patterns.
+
+Recommends preparation activities.
+
+---
+
+## Workflow Automation Agent
+
+Schedules reminders.
+
+Triggers notifications.
+
+Coordinates recurring tasks.
+
+Integrates with calendars and email.
+
+---
+
+# BigQuery Intelligence Layer
+
+The historical procurement warehouse should expose analytical services such as:
+
+Buyer trends.
+
+Sector trends.
+
+Regional analysis.
+
+Award analysis.
+
+Historical participation.
+
+Seasonality.
+
+Contract value distributions.
+
+Category performance.
+
+Supplier participation.
+
+Market forecasts.
+
+These services become reusable APIs for the AI agents.
+
+---
+
+# Major Platform Modules
+
+## Dashboard
+
+Daily priorities.
+
+Opportunity summary.
+
+Readiness status.
+
+Procurement Pulse.
+
+Academy progress.
+
+AI recommendations.
+
+---
+
+## Opportunity Centre
+
+Tender search.
+
+AI recommendations.
+
+Opportunity Score™.
+
+Watchlists.
+
+Filters.
+
+Historical buyer analysis.
+
+---
+
+## Proposal Centre
+
+Proposal workspace.
+
+Proposal scoring.
+
+AI review.
+
+Templates.
+
+Version management.
+
+Submission checklist.
+
+---
+
+## Intelligence Centre
+
+Market analytics.
+
+Sector dashboards.
+
+Historical procurement reports.
+
+Forecasts.
+
+Executive reports.
+
+Custom queries.
+
+---
+
+## Readiness Centre
+
+Readiness Score.
+
+Document vault.
+
+Certificate management.
+
+Compliance monitoring.
+
+Improvement recommendations.
+
+---
+
+## Academy Centre
+
+Learning paths.
+
+Courses.
+
+Certificates.
+
+Assessments.
+
+Workshop registration.
+
+---
+
+## Community Centre
+
+Discussion groups.
+
+Success stories.
+
+Events.
+
+Webinars.
+
+Partner announcements.
+
+---
+
+## Administration
+
+Users.
+
+Organizations.
+
+Permissions.
+
+Billing.
+
+Content.
+
+Analytics.
+
+System monitoring.
+
+---
+
+# Functional Requirements
+
+Every module should satisfy the following principles:
+
+Fast.
+
+Explainable.
+
+Evidence-based.
+
+Context-aware.
+
+Personalized.
+
+Action-oriented.
+
+Whenever AI generates a recommendation, the interface should explain the reasoning and, where appropriate, reference the underlying procurement data or user profile factors that influenced the recommendation. This builds trust and helps users make informed decisions.
+
+---
+
+# Long-Term Product Goal
+
+The platform should evolve into the daily operating system for procurement organizations, supporting strategic planning, operational readiness, proposal excellence, continuous learning, and evidence-based decision-making through integrated procurement intelligence.

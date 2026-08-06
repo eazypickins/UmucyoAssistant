@@ -1,0 +1,424 @@
+# Chapter 10
+
+# Sales, Customer Success & Revenue Operating System
+
+## Introduction
+
+The purpose of the sales function is not to persuade organizations to purchase software.
+
+Its purpose is to help organizations improve their procurement performance.
+
+This distinction is important.
+
+Organizations purchasing UmucyoAssistant are making an investment in business growth. Every interaction should reinforce that investment by demonstrating measurable value.
+
+The commercial operating model therefore combines consultative selling, structured onboarding, proactive customer success, and continuous value delivery.
+
+---
+
+# Commercial Philosophy
+
+Every customer relationship should follow the same progression:
+
+Discover
+
+↓
+
+Diagnose
+
+↓
+
+Demonstrate
+
+↓
+
+Deploy
+
+↓
+
+Develop
+
+↓
+
+Delight
+
+↓
+
+Refer
+
+This becomes the standard operating framework for every member of the commercial team.
+
+---
+
+# Sales Principles
+
+Every conversation should follow three rules.
+
+### Rule 1
+
+Lead with business outcomes.
+
+Do not begin by explaining features.
+
+Instead discuss:
+
+* missed opportunities,
+* proposal quality,
+* procurement readiness,
+* growth objectives.
+
+---
+
+### Rule 2
+
+Teach before selling.
+
+Customers should leave every meeting having learned something valuable, regardless of whether they subscribe.
+
+This builds trust.
+
+---
+
+### Rule 3
+
+Quantify value.
+
+Whenever possible, estimate potential impact.
+
+Examples include:
+
+Hours saved.
+
+Additional opportunities discovered.
+
+Reduction in proposal preparation time.
+
+Reduction in compliance risk.
+
+Potential increase in bid participation.
+
+---
+
+# Customer Acquisition Pipeline
+
+Every prospect should progress through a structured pipeline.
+
+### Stage 1
+
+Prospect Identified
+
+The organization is added to the CRM.
+
+Information captured includes:
+
+Industry.
+
+Company size.
+
+Current procurement activity.
+
+Decision-maker.
+
+Source.
+
+---
+
+### Stage 2
+
+Initial Contact
+
+Objective:
+
+Understand the organization's procurement process.
+
+Avoid product demonstrations during the first conversation.
+
+Focus on understanding challenges.
+
+---
+
+### Stage 3
+
+Procurement Readiness Assessment
+
+The prospect completes the assessment.
+
+Outputs include:
+
+Readiness score.
+
+Procurement maturity level.
+
+Recommended improvements.
+
+Personalized demonstration agenda.
+
+This transforms the sales conversation into a consulting engagement.
+
+---
+
+### Stage 4
+
+Live Demonstration
+
+Demonstrate only features relevant to the customer's priorities.
+
+Examples:
+
+Tender discovery.
+
+Proposal review.
+
+Historical procurement insights.
+
+Compliance monitoring.
+
+Procurement Pulse.
+
+The demonstration should answer:
+
+"How does this improve our procurement performance?"
+
+---
+
+### Stage 5
+
+Trial Period
+
+Recommended duration:
+
+Fourteen days.
+
+Objectives:
+
+Receive personalized tender alerts.
+
+Upload company documents.
+
+Review an existing proposal.
+
+Complete one Academy lesson.
+
+Generate one Procurement Intelligence report.
+
+The trial should guide customers toward meaningful outcomes rather than passive exploration.
+
+---
+
+### Stage 6
+
+Subscription
+
+Before payment, summarize the value already experienced during the trial.
+
+Reinforce measurable improvements rather than listing features.
+
+---
+
+### Stage 7
+
+Customer Success
+
+Immediately after subscription, schedule:
+
+Welcome meeting.
+
+Readiness review.
+
+Success planning session.
+
+Thirty-day check-in.
+
+Ninety-day business review.
+
+---
+
+# CRM Design
+
+The CRM should track more than sales.
+
+It should capture the customer's procurement journey.
+
+Suggested fields include:
+
+Industry.
+
+Organization size.
+
+Primary services.
+
+Preferred procurement categories.
+
+Current procurement maturity level.
+
+Readiness score.
+
+Workshop attendance.
+
+Webinar attendance.
+
+Proposal reviews completed.
+
+Academy courses completed.
+
+Procurement Pulse engagement.
+
+Renewal probability.
+
+Referral activity.
+
+This creates a richer understanding of customer progress over time.
+
+---
+
+# The Customer Success Score
+
+Develop an internal Customer Success Score combining indicators such as:
+
+Platform activity.
+
+Proposal reviews.
+
+Readiness improvements.
+
+Academy participation.
+
+Document completeness.
+
+Newsletter engagement.
+
+Community participation.
+
+Customers with declining scores should receive proactive support before they consider cancelling.
+
+---
+
+# Quarterly Business Reviews
+
+Every three months, provide customers with a structured review.
+
+Suggested sections:
+
+Opportunities identified.
+
+Proposals prepared.
+
+Proposal quality improvements.
+
+Readiness progress.
+
+Academy participation.
+
+Historical procurement insights relevant to their industry.
+
+Recommendations for the next quarter.
+
+This reinforces the perception that UmucyoAssistant is a strategic partner rather than a software subscription.
+
+---
+
+# Renewal Strategy
+
+Never wait until the subscription expires.
+
+Begin demonstrating value continuously.
+
+Thirty days before renewal:
+
+Share:
+
+Procurement activity summary.
+
+Business impact.
+
+Readiness improvements.
+
+Upcoming opportunities.
+
+New platform features.
+
+Customers renew when they clearly understand the value already received.
+
+---
+
+# Referral Programme
+
+Satisfied customers are the most credible marketing channel.
+
+Create a structured referral programme.
+
+Rewards may include:
+
+Additional users.
+
+Extended subscriptions.
+
+Academy credits.
+
+Premium intelligence reports.
+
+Recognition within the community.
+
+The objective is to encourage advocacy without undermining trust.
+
+---
+
+# Customer Health Dashboard
+
+Every customer account should display:
+
+Readiness score.
+
+Procurement maturity level.
+
+Proposal quality trend.
+
+Community participation.
+
+Training progress.
+
+Platform engagement.
+
+Renewal status.
+
+Recommended next actions.
+
+This dashboard enables proactive account management.
+
+---
+
+# Commercial KPIs
+
+Measure:
+
+Lead-to-assessment conversion.
+
+Assessment-to-demo conversion.
+
+Demo-to-trial conversion.
+
+Trial-to-paid conversion.
+
+Customer Success Score.
+
+Monthly recurring revenue.
+
+Net revenue retention.
+
+Customer lifetime value.
+
+Referral rate.
+
+Procurement maturity improvement.
+
+These indicators provide a balanced view of commercial performance.
+
+---
+
+# Long-Term Objective
+
+The ultimate measure of commercial success is not software adoption.
+
+It is whether customers consistently become more capable procurement organizations.
+
+When customers view UmucyoAssistant as an essential contributor to their business growth, recurring revenue becomes the natural consequence of sustained value delivery.
